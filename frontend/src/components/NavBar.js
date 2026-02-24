@@ -42,15 +42,20 @@ const Navbar = () => {
     return '/user/info';
   };
 
-  const logOut = () => {
-    dispatch(userLogoutAction());
-    window.location.reload(true);
-    setTimeout(() => navigate('/'), 500);
+  const getDisplayName = () => {
+    if (!userInfo) return 'User';
+    const fullName = `${userInfo.firstName || ''} ${userInfo.lastName || ''}`.trim();
+    return userInfo.name || fullName || userInfo.email || 'User';
+  };
+
+  const logOut = async () => {
+    await dispatch(userLogoutAction());
+    navigate('/', { replace: true });
   };
 
   const getInitials = () => {
-    if (!userInfo?.name) return '';
-    return userInfo.name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
+    const displayName = getDisplayName();
+    return displayName.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
   };
 
   const getRoleLabel = () => {
@@ -61,7 +66,7 @@ const Navbar = () => {
   };
 
   // Shared logo mark component
-  const LogoMark = ({ size = 34, fontSize = 18 }) => (
+  const LogoMark = ({ size = 56 }) => (
     <Box sx={{
       width: size, height: size, borderRadius: `${size * 0.26}px`,
       overflow: 'hidden',
@@ -71,8 +76,14 @@ const Navbar = () => {
       <Box
         component="img"
         src={logoDashboard}
-        alt="Hirely"
-        sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
+        alt="TalentSphere"
+        sx={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          transform: 'scale(1.15)',
+          transformOrigin: 'center',
+        }}
       />
     </Box>
   );
@@ -89,7 +100,7 @@ const Navbar = () => {
       }}
     >
       <Container maxWidth="lg">
-        <Toolbar disableGutters sx={{ height: 68 }}>
+        <Toolbar disableGutters sx={{ height: 78 }}>
 
           {/* ── LOGO (desktop) ── */}
           <Box
@@ -101,14 +112,14 @@ const Navbar = () => {
               textDecoration: 'none', mr: 4,
             }}
           >
-            <LogoMark size={34} />
+            <LogoMark size={56} />
             <Typography sx={{
               fontFamily: "'Syne', sans-serif",
-              fontWeight: 800, fontSize: '1.35rem',
+              fontWeight: 800, fontSize: '1.45rem',
               letterSpacing: '-0.5px', color: '#0a2463',
               '& span': { color: '#2f80ed' },
             }}>
-              Hire<span>ly</span>
+              Talent<span>Sphere</span>
             </Typography>
           </Box>
 
@@ -148,14 +159,14 @@ const Navbar = () => {
               textDecoration: 'none', flexGrow: 1,
             }}
           >
-            <LogoMark size={30} />
+            <LogoMark size={46} />
             <Typography sx={{
               fontFamily: "'Syne', sans-serif",
-              fontWeight: 800, fontSize: '1.2rem',
+              fontWeight: 800, fontSize: '1.15rem',
               letterSpacing: '-0.5px', color: '#0a2463',
               '& span': { color: '#2f80ed' },
             }}>
-              Hire<span>ly</span>
+              Talent<span>Sphere</span>
             </Typography>
           </Box>
 
@@ -223,7 +234,7 @@ const Navbar = () => {
             )}
 
             {/* Avatar menu trigger */}
-            <Tooltip title={userInfo ? userInfo.name || 'Account' : 'Account'}>
+            <Tooltip title={userInfo ? getDisplayName() : 'Account'}>
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0.5 }}>
                 <Avatar
                   src={userInfo?.avatar || ''}
@@ -272,7 +283,7 @@ const Navbar = () => {
               {userInfo && (
                 <Box sx={{ px: 2, py: 1.5 }}>
                   <Typography sx={{ fontWeight: 700, color: '#0a2463', fontSize: '0.95rem' }}>
-                    {userInfo.name || 'User'}
+                    {getDisplayName()}
                   </Typography>
                   <Typography sx={{ fontSize: '0.78rem', color: '#64748b' }}>
                     {getRoleLabel()}
@@ -326,7 +337,7 @@ const Navbar = () => {
                 <>
                   <Divider sx={{ borderColor: '#dbeafe' }} />
                   <MenuItem
-                    onClick={() => { handleCloseUserMenu(); logOut(); }}
+                    onClick={async () => { handleCloseUserMenu(); await logOut(); }}
                     sx={{ gap: 1.5, py: 1.2, color: '#ef4444', fontSize: '0.9rem', '&:hover': { bgcolor: '#fef2f2' } }}
                   >
                     <LogoutIcon fontSize="small" /> Log Out
@@ -343,3 +354,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+

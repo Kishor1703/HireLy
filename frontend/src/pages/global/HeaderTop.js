@@ -30,9 +30,11 @@ const SearchWrapper = styled('div')(({ theme }) => ({
   transition: 'all 0.2s ease',
   marginLeft: 0,
   width: '100%',
+  maxWidth: '150px',
   [theme.breakpoints.up('sm')]: {
     marginLeft: theme.spacing(1),
     width: 'auto',
+    maxWidth: 'none',
   },
 }));
 
@@ -64,7 +66,15 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const HeaderTop = () => {
-  const { collapseSidebar } = useProSidebar();
+  const { collapseSidebar, toggleSidebar, broken } = useProSidebar();
+
+  const handleSidebarToggle = () => {
+    if (broken) {
+      toggleSidebar();
+      return;
+    }
+    collapseSidebar();
+  };
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -76,12 +86,12 @@ const HeaderTop = () => {
           borderBottom: '1px solid rgba(255,255,255,0.08)',
         }}
       >
-        <Toolbar sx={{ height: 64, px: { xs: 1.5, sm: 2.5 } }}>
+        <Toolbar sx={{ minHeight: { xs: 56, sm: 64 }, px: { xs: 1, sm: 2.5 } }}>
 
           {/* Sidebar toggle */}
           <Tooltip title="Toggle sidebar">
             <IconButton
-              onClick={() => collapseSidebar()}
+              onClick={handleSidebarToggle}
               size="medium"
               edge="start"
               color="inherit"
@@ -114,7 +124,7 @@ const HeaderTop = () => {
               letterSpacing: '-0.5px', color: '#fff',
               '& span': { color: '#2f80ed' },
             }}>
-              Hire<span>Ly</span>
+              Talent<span>Sphere</span>
             </Typography>
           </Box>
 
@@ -157,3 +167,5 @@ const HeaderTop = () => {
 };
 
 export default HeaderTop;
+
+

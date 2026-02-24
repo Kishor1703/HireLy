@@ -122,7 +122,7 @@ const CommonHome = () => {
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
             }}>
-              Hirely
+              TalentSphere
             </Box>
             <br />Your Career Awaits
           </Typography>
@@ -338,7 +338,7 @@ const CommonHome = () => {
             textAlign: 'center', color: '#64748b',
             mb: 5, fontSize: '1rem',
           }}>
-            Hirely makes finding your next role fast and effortless.
+            TalentSphere makes finding your next role fast and effortless.
           </Typography>
 
           <Grid container spacing={3}>
@@ -414,7 +414,7 @@ const CommonHome = () => {
             Ready to land your dream job?
           </Typography>
           <Typography sx={{ color: 'rgba(255,255,255,0.7)', fontSize: '1rem' }}>
-            Join 5 million professionals who found their next opportunity on Hirely.
+            Join 5 million professionals who found their next opportunity on TalentSphere.
           </Typography>
         </Box>
 

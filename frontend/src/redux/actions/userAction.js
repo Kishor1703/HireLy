@@ -19,10 +19,31 @@ export const userSignInAction = (user) => async (dispatch) => {
     dispatch({ type: USER_SIGNIN_REQUEST });
     try {
         const { data } = await axios.post("/api/signin", user);
-        localStorage.setItem('userInfo', JSON.stringify(data));
+        let userInfo = { ...data };
+
+        try {
+            const profileRes = await axios.get("/api/me");
+            const profileUser = profileRes?.data?.user;
+            if (profileUser) {
+                const fullName = `${profileUser.firstName || ""} ${profileUser.lastName || ""}`.trim();
+                userInfo = {
+                    ...data,
+                    ...profileUser,
+                    name: profileUser.name || fullName || profileUser.email || "User"
+                };
+            }
+        } catch (profileError) {
+            const fallbackName = `${data?.firstName || ""} ${data?.lastName || ""}`.trim();
+            userInfo = {
+                ...data,
+                name: data?.name || fallbackName || data?.email || "User"
+            };
+        }
+
+        localStorage.setItem('userInfo', JSON.stringify(userInfo));
         dispatch({
             type: USER_SIGNIN_SUCCESS,
-            payload: data
+            payload: userInfo
         });
         toast.success("Login Successfully!");
     } catch (error) {
@@ -39,20 +60,21 @@ export const userLogoutAction = () => async (dispatch) => {
     dispatch({ type: USER_LOGOUT_REQUEST });
     try {
         const { data } = await axios.get("/api/logout");
-        localStorage.removeItem('userInfo');
         dispatch({
             type: USER_LOGOUT_SUCCESS,
             payload: data
         });
-        dispatch({ type: USER_SIGNIN_RESET });
-        dispatch({ type: USER_LOAD_RESET });
         toast.success("Log out successfully!");
     } catch (error) {
         dispatch({
             type: USER_LOGOUT_FAIL,
             payload: error?.response?.data?.error || "Logout failed"
         });
-        toast.error(error?.response?.data?.error || "Logout failed");
+        toast.warning("Logged out locally");
+    } finally {
+        localStorage.removeItem('userInfo');
+        dispatch({ type: USER_SIGNIN_RESET });
+        dispatch({ type: USER_LOAD_RESET });
     }
 }
 

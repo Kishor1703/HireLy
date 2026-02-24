@@ -5,10 +5,10 @@ import SidebarAdm from './Sidebar';
 
 const Layout = (Component) => ({ ...props }) => {
   return (
-    <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
+    <Box sx={{ display: 'flex', minHeight: '100dvh', overflow: 'hidden' }}>
 
       {/* Sidebar — fixed height, no shrink */}
-      <Box sx={{ flexShrink: 0, height: '100vh', overflowY: 'auto' }}>
+      <Box sx={{ flexShrink: 0, height: '100dvh', overflowY: 'auto' }}>
         <SidebarAdm />
       </Box>
 
@@ -18,7 +18,7 @@ const Layout = (Component) => ({ ...props }) => {
         minWidth: 0,
         display: 'flex',
         flexDirection: 'column',
-        height: '100vh',
+        height: '100dvh',
         overflow: 'hidden',
         background: 'linear-gradient(160deg, #eff6ff 0%, #f8faff 60%, #eef4ff 100%)',
         position: 'relative',
@@ -43,16 +43,16 @@ const Layout = (Component) => ({ ...props }) => {
           overflowY: 'auto',
           position: 'relative',
           zIndex: 1,
-          p: { xs: 2, sm: 3 },
+          p: { xs: 1.25, sm: 2.25, md: 3 },
         }}>
           {/* White content card */}
           <Box sx={{
             bgcolor: 'rgba(255,255,255,0.85)',
             backdropFilter: 'blur(12px)',
-            borderRadius: '16px',
+            borderRadius: { xs: '12px', sm: '16px' },
             border: '1px solid rgba(219,234,254,0.9)',
             boxShadow: '0 2px 16px rgba(10,36,99,0.07)',
-            p: { xs: 2, sm: 3 },
+            p: { xs: 1.5, sm: 2.5, md: 3 },
             minHeight: '100%',
           }}>
             <Component {...props} />

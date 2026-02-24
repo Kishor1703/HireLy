@@ -49,11 +49,11 @@ const Footer = () => {
           <Box sx={{ maxWidth: 260 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
               <Box sx={{
-                width: 34, height: 34, borderRadius: '9px',
+                width: 48, height: 48, borderRadius: '12px',
                 overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.15)',
                 flexShrink: 0,
               }}>
-                <Box component="img" src={logoDashboard} alt="Hirely"
+                <Box component="img" src={logoDashboard} alt="TalentSphere"
                   sx={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </Box>
               <Typography sx={{
@@ -61,7 +61,7 @@ const Footer = () => {
                 letterSpacing: '-0.5px',
                 '& span': { color: 'rgba(255,255,255,0.45)' },
               }}>
-                Hire<span>ly</span>
+                Talent<span>Sphere</span>
               </Typography>
             </Box>
             <Typography sx={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.5)', lineHeight: 1.8 }}>
@@ -148,7 +148,7 @@ const Footer = () => {
           alignItems: 'center', flexWrap: 'wrap', gap: 1,
         }}>
           <Typography sx={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.3)' }}>
-            © {new Date().getFullYear()} HireLy. All rights reserved.
+            © {new Date().getFullYear()} TalentSphere. All rights reserved.
           </Typography>
           <Box sx={{ display: 'flex', gap: 2.5 }}>
             {['Privacy Policy', 'Terms of Service'].map((item) => (
@@ -169,3 +169,4 @@ const Footer = () => {
 };
 
 export default Footer;
+

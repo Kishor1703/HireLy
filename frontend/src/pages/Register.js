@@ -94,15 +94,15 @@ function Register() {
               {/* Logo */}
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
                 <Box sx={{
-                  width: 36, height: 36, borderRadius: '10px',
+                  width: 48, height: 48, borderRadius: '12px',
                   background: 'linear-gradient(135deg, #2f80ed, #0a2463)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>
-                  <WorkIcon sx={{ color: '#fff', fontSize: 18 }} />
+                  <WorkIcon sx={{ color: '#fff', fontSize: 24 }} />
                 </Box>
                 <Typography sx={{ fontWeight: 800, fontSize: '1.2rem', color: '#0a2463',
                   '& span': { color: '#2f80ed' } }}>
-                  Hire<span>ly</span>
+                  Talent<span>Sphere</span>
                 </Typography>
               </Box>
 
@@ -110,7 +110,7 @@ function Register() {
                 Create your account
               </Typography>
               <Typography sx={{ color: '#64748b', fontSize: '0.9rem', mb: 3 }}>
-                Join Hirely and find your next opportunity
+                Join TalentSphere and find your next opportunity
               </Typography>
 
               {/* Error message */}
@@ -267,3 +267,4 @@ function Register() {
 }
 
 export default Register;
+

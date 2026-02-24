@@ -54,16 +54,21 @@ const roleConfig = {
 
 const SidebarAdm = () => {
   const { userInfo } = useSelector((state) => state.signIn);
-  const { collapsed } = useProSidebar();
+  const { collapsed, broken, toggled, toggleSidebar } = useProSidebar();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const role   = userInfo?.role ?? 0;
   const config = roleConfig[role] || roleConfig[0];
 
+  const getDisplayName = () => {
+    const fullName = `${userInfo?.firstName || ''} ${userInfo?.lastName || ''}`.trim();
+    return userInfo?.name || fullName || userInfo?.email || 'User';
+  };
+
   const getInitials = () => {
-    if (!userInfo?.name) return 'U';
-    return userInfo.name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
+    const displayName = getDisplayName();
+    return displayName.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
   };
 
   const logOut = async () => {
@@ -89,11 +94,15 @@ const SidebarAdm = () => {
 
   return (
     <Sidebar
+      breakPoint="md"
+      toggled={toggled}
+      onBackdropClick={() => toggleSidebar(false)}
       backgroundColor="transparent"
       style={{
         background: 'linear-gradient(180deg, #0a2463 0%, #0d3080 60%, #0a2463 100%)',
         borderRight: '1px solid rgba(255,255,255,0.07)',
-        height: '100vh',
+        height: '100dvh',
+        zIndex: 1200,
       }}
     >
       <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between' }}>
@@ -110,22 +119,22 @@ const SidebarAdm = () => {
             {collapsed ? (
               // Collapsed — small square logo only
               <Box sx={{
-                width: 36, height: 36, borderRadius: '9px',
+                width: 48, height: 48, borderRadius: '100px',
                 overflow: 'hidden',
                 border: '1.5px solid rgba(255,255,255,0.15)',
               }}>
                 <Box
                   component="img"
                   src={logoDashboard}
-                  alt="Hirely"
-                  sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  alt="TalentSphere"
+                  sx={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scale(1.3)', transformOrigin: 'center' }}
                 />
               </Box>
             ) : (
               // Expanded — logo image + brand text
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
                 <Box sx={{
-                  width: 36, height: 36, borderRadius: '9px',
+                  width: 60, height: 60, borderRadius: '16px',
                   overflow: 'hidden',
                   border: '1.5px solid rgba(255,255,255,0.15)',
                   flexShrink: 0,
@@ -133,16 +142,16 @@ const SidebarAdm = () => {
                   <Box
                     component="img"
                     src={logoDashboard}
-                    alt="Hirely"
-                    sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    alt="TalentSphere"
+                    sx={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scale(1.3)', transformOrigin: 'center' }}
                   />
                 </Box>
                 <Typography sx={{
-                  fontWeight: 800, fontSize: '1.2rem',
+                  fontWeight: 800, fontSize: '1.5rem',
                   color: '#fff', letterSpacing: '-0.5px',
                   '& span': { color: '#2f80ed' },
                 }}>
-                  Hire<span>Ly</span>
+                  Talent<span>Sphere</span>
                 </Typography>
               </Box>
             )}
@@ -168,7 +177,7 @@ const SidebarAdm = () => {
                   fontSize: '0.82rem', fontWeight: 700, color: '#fff',
                   whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
                 }}>
-                  {userInfo?.name || 'User'}
+                  {getDisplayName()}
                 </Typography>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                   <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: config.color }} />
@@ -195,7 +204,16 @@ const SidebarAdm = () => {
           {/* Menu items */}
           <Menu menuItemStyles={menuItemStyles}>
             {config.items.map((item) => (
-              <MenuItem key={item.to} component={<Link to={item.to} />} icon={item.icon}>
+              <MenuItem
+                key={item.to}
+                component={<Link to={item.to} />}
+                icon={item.icon}
+                onClick={() => {
+                  if (broken) {
+                    toggleSidebar(false);
+                  }
+                }}
+              >
                 {item.label}
               </MenuItem>
             ))}
@@ -219,7 +237,15 @@ const SidebarAdm = () => {
               },
             }}
           >
-            <MenuItem onClick={logOut} icon={<LogoutOutlinedIcon />}>
+            <MenuItem
+              onClick={() => {
+                if (broken) {
+                  toggleSidebar(false);
+                }
+                logOut();
+              }}
+              icon={<LogoutOutlinedIcon />}
+            >
               Log Out
             </MenuItem>
           </Menu>
@@ -231,3 +257,6 @@ const SidebarAdm = () => {
 };
 
 export default SidebarAdm;
+
+
+
