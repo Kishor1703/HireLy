@@ -12,6 +12,7 @@ const userRoutes = require("./routes/userRoutes");
 const jobsTypeRoutes = require("./routes/jobsTypeRoutes");
 const jobsRoutes = require("./routes/jobsRoutes");
 const applicationRoutes = require("./routes/applicationRoutes");
+const serverless = require("serverless-http");
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -62,7 +63,5 @@ app.use("/api", jobsRoutes);
 app.use("/api/applications", applicationRoutes);
 
 app.use(errorHandler);
-
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+module.exports = app;
+module.exports.handler = serverless(app);
