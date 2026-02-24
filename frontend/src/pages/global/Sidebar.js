@@ -66,10 +66,9 @@ const SidebarAdm = () => {
     return userInfo.name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
   };
 
-  const logOut = () => {
-    dispatch(userLogoutAction());
-    window.location.reload(true);
-    setTimeout(() => navigate('/'), 500);
+  const logOut = async () => {
+    await dispatch(userLogoutAction());
+    navigate('/');
   };
 
   const menuItemStyles = {

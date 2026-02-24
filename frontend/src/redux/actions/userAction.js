@@ -2,12 +2,14 @@ import axios from 'axios';
 import { toast } from "react-toastify";
 import { USER_LOAD_FAIL, 
     USER_LOAD_REQUEST, 
+    USER_LOAD_RESET, 
     USER_LOAD_SUCCESS, 
     USER_LOGOUT_FAIL, 
     USER_LOGOUT_REQUEST, 
     USER_LOGOUT_SUCCESS, 
     USER_SIGNIN_FAIL, 
     USER_SIGNIN_REQUEST, 
+    USER_SIGNIN_RESET, 
     USER_SIGNIN_SUCCESS } from '../constants/userConstant';
 
 
@@ -42,13 +44,15 @@ export const userLogoutAction = () => async (dispatch) => {
             type: USER_LOGOUT_SUCCESS,
             payload: data
         });
+        dispatch({ type: USER_SIGNIN_RESET });
+        dispatch({ type: USER_LOAD_RESET });
         toast.success("Log out successfully!");
     } catch (error) {
         dispatch({
             type: USER_LOGOUT_FAIL,
-            payload: error.response.data.error
+            payload: error?.response?.data?.error || "Logout failed"
         });
-        toast.error(error.response.data.error);
+        toast.error(error?.response?.data?.error || "Logout failed");
     }
 }
 
