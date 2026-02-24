@@ -2,10 +2,9 @@ import React, { useEffect, useState } from 'react';
 import NavBar from '../components/NavBar';
 import Header from '../components/Header';
 import { Box, Card, Container, ListItemIcon, MenuItem, MenuList, Stack, Typography, useTheme } from '@mui/material';
-import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { jobLoadAction } from '../redux/actions/jobAction';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { Pagination } from '@mui/material';
 import CardElement from '../components/CardElement';
 import Footer from '../components/Footer';
@@ -16,10 +15,8 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 const Home = () => {
     const { jobs, setUniqueLocation, pages, loading } = useSelector(state => state.loadJobs);
-    const { userInfo } = useSelector((state) => state.signIn || {});
     const { palette } = useTheme();
     const dispatch = useDispatch();
-    const navigate = useNavigate();
     const { keyword, location } = useParams();
 
     const [page, setPage] = useState(1);
@@ -36,24 +33,6 @@ const Home = () => {
     const handleChangeCategory = (e) => {
         setCat(e.target.value);
     }
-
-    const applyToJob = async (jobId, resume, clearForm) => {
-        if (!userInfo) {
-            navigate('/login?role=employee');
-            return;
-        }
-        if (userInfo.role !== 0) {
-            alert('Only employees can apply for jobs.');
-            return;
-        }
-        try {
-            await axios.post('/api/applications', { jobId, resume });
-            alert('Application submitted successfully.');
-            clearForm();
-        } catch (error) {
-            alert(error?.response?.data?.message || error?.response?.data?.error || 'Application failed');
-        }
-    };
 
     return (
         <>
@@ -127,8 +106,6 @@ const Home = () => {
                                                 companyLogo={job.companyLogo}
                                                 category={job.jobType ? job.jobType.jobTypeName : "No category"}
                                                 location={job.location}
-                                                canApply={userInfo && userInfo.role === 0}
-                                                onApply={applyToJob}
                                             />
                                         ))
                             }

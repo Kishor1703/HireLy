@@ -21,6 +21,8 @@ import JobPosterDashboard from './pages/poster/JobPosterDashboard';
 import AdminCategory from './pages/admin/AdminCategory';
 import JobDetails from './pages/JobDetails';
 import CompanyProfile from './pages/poster/CompanyProfile';
+import PosterApplications from './pages/poster/PosterApplications';
+import ManageJobs from './pages/poster/ManageJobs';
 
 //HOC
 const UserDashboardHOC = Layout(UserDashboard);
@@ -31,6 +33,8 @@ const AdminDashboardHOC = Layout(AdminDashboard);
 const JobPosterDashboardHOC = Layout(JobPosterDashboard);
 const AdminCategoryHOC = Layout(AdminCategory);
 const CompanyProfileHOC = Layout(CompanyProfile);
+const PosterApplicationsHOC = Layout(PosterApplications);
+const ManageJobsHOC = Layout(ManageJobs);
 
 
 // Define your theme object
@@ -56,7 +60,9 @@ const App = () => {
             <Route path='/user/dashboard' element={<UserRoute allowedRoles={[0]}><UserDashboardHOC /></UserRoute>} />
             <Route path='/user/apply-jobs' element={<UserRoute allowedRoles={[0]}><EmployeeApplyJobsHOC /></UserRoute>} />
             <Route path='/poster/dashboard' element={<UserRoute allowedRoles={[2]}><JobPosterDashboardHOC /></UserRoute>} />
+            <Route path='/poster/manage-jobs' element={<UserRoute allowedRoles={[2]}><ManageJobsHOC /></UserRoute>} />
             <Route path='/poster/company-profile' element={<UserRoute allowedRoles={[2]}><CompanyProfileHOC /></UserRoute>} />
+            <Route path='/poster/applications' element={<UserRoute allowedRoles={[2]}><PosterApplicationsHOC /></UserRoute>} />
             <Route path='/admin/dashboard' element={<UserRoute allowedRoles={[1]}><AdminDashboardHOC /></UserRoute>} />
             <Route path='/admin/category' element={<UserRoute allowedRoles={[1]}><AdminCategoryHOC /></UserRoute>} />
             <Route path='/user/jobs' element={<UserRoute allowedRoles={[0]}><UserJobsHistoryHOC /></UserRoute>} />

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { styled, alpha } from '@mui/material/styles';
+import { styled} from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -8,9 +8,9 @@ import Typography from '@mui/material/Typography';
 import InputBase from '@mui/material/InputBase';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
-import WorkIcon from '@mui/icons-material/Work';
-import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
-import Badge from '@mui/material/Badge';
+// import WorkIcon from '@mui/icons-material/Work';
+// import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
+// import Badge from '@mui/material/Badge';
 import Tooltip from '@mui/material/Tooltip';
 import { useProSidebar } from 'react-pro-sidebar';
 
@@ -102,19 +102,19 @@ const HeaderTop = () => {
             display: { xs: 'none', sm: 'flex' },
             alignItems: 'center', gap: 1, mr: 3,
           }}>
-            <Box sx={{
+            {/* <Box sx={{
               width: 30, height: 30, borderRadius: '8px',
               bgcolor: 'rgba(255,255,255,0.15)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>
               <WorkIcon sx={{ fontSize: 17, color: '#fff' }} />
-            </Box>
+            </Box> */}
             <Typography sx={{
               fontWeight: 800, fontSize: '1.1rem',
               letterSpacing: '-0.5px', color: '#fff',
-              '& span': { color: 'rgba(255,255,255,0.6)' },
+              '& span': { color: '#2f80ed' },
             }}>
-              Hire<span>ly</span>
+              Hire<span>Ly</span>
             </Typography>
           </Box>
 
@@ -133,7 +133,7 @@ const HeaderTop = () => {
           </SearchWrapper>
 
           {/* Notification bell */}
-          <Tooltip title="Notifications">
+          {/* <Tooltip title="Notifications">
             <IconButton
               color="inherit"
               sx={{
@@ -148,7 +148,7 @@ const HeaderTop = () => {
                 <NotificationsNoneOutlinedIcon sx={{ fontSize: 22 }} />
               </Badge>
             </IconButton>
-          </Tooltip>
+          </Tooltip> */}
 
         </Toolbar>
       </AppBar>

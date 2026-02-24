@@ -1,15 +1,11 @@
 import * as React from 'react';
-import { Box, Button, Chip, Typography, TextField, InputAdornment, Avatar } from '@mui/material';
+import { Box, Button, Chip, Typography } from '@mui/material';
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
 import OpenInNewOutlinedIcon from '@mui/icons-material/OpenInNewOutlined';
-import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
-import LinkOutlinedIcon from '@mui/icons-material/LinkOutlined';
 import { Link } from 'react-router-dom';
 
-const CardElement = ({ jobTitle, description, category, location, companyName, companyLogo, id, canApply, onApply }) => {
-  const [resume, setResume] = React.useState('');
-
+const CardElement = ({ jobTitle, description, category, location, companyName, companyLogo, id }) => {
   const shortDesc = description && typeof description === 'string'
     ? description.split(' ').slice(0, 20).join(' ') + '...'
     : 'No description available';
@@ -84,31 +80,6 @@ const CardElement = ({ jobTitle, description, category, location, companyName, c
         {shortDesc}
       </Typography>
 
-      {/* Resume input */}
-      {canApply && (
-        <TextField
-          fullWidth size="small"
-          placeholder="Paste your resume link..."
-          value={resume}
-          onChange={(e) => setResume(e.target.value)}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <LinkOutlinedIcon sx={{ fontSize: 15, color: '#94a3b8' }} />
-              </InputAdornment>
-            ),
-          }}
-          sx={{
-            mb: 1.5,
-            '& .MuiOutlinedInput-root': {
-              borderRadius: '10px', bgcolor: '#f8faff', fontSize: '0.82rem',
-              '&:hover fieldset': { borderColor: '#2f80ed' },
-              '&.Mui-focused fieldset': { borderColor: '#1e4fd8' },
-            },
-          }}
-        />
-      )}
-
       {/* Buttons */}
       <Box sx={{ display: 'flex', gap: 1 }}>
         <Button
@@ -116,7 +87,7 @@ const CardElement = ({ jobTitle, description, category, location, companyName, c
           variant="outlined" size="small"
           endIcon={<OpenInNewOutlinedIcon sx={{ fontSize: '13px !important' }} />}
           sx={{
-            flex: canApply ? 1 : 'unset',
+            flex: 1,
             borderRadius: '10px', textTransform: 'none',
             fontWeight: 600, fontSize: '0.82rem',
             borderColor: '#dbeafe', color: '#1e4fd8',
@@ -126,26 +97,6 @@ const CardElement = ({ jobTitle, description, category, location, companyName, c
         >
           Details
         </Button>
-
-        {canApply && (
-          <Button
-            variant="contained" size="small"
-            disabled={!resume.trim()}
-            onClick={() => onApply && onApply(id, resume, () => setResume(''))}
-            endIcon={<SendOutlinedIcon sx={{ fontSize: '13px !important' }} />}
-            sx={{
-              flex: 1, borderRadius: '10px',
-              textTransform: 'none', fontWeight: 600, fontSize: '0.82rem',
-              background: 'linear-gradient(135deg, #2f80ed, #1e4fd8)',
-              boxShadow: '0 2px 8px rgba(31,79,216,0.2)',
-              '&:hover': { background: 'linear-gradient(135deg, #1e4fd8, #0a2463)' },
-              '&:disabled': { background: '#bfdbfe', boxShadow: 'none' },
-              transition: 'all 0.2s',
-            }}
-          >
-            Apply
-          </Button>
-        )}
       </Box>
     </Box>
   );

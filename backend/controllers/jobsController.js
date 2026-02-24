@@ -120,3 +120,92 @@ exports.showJobs = async(req, res, next) => {
         next(error);
     }
 }
+
+// job poster: list own posted jobs
+exports.getPosterJobs = async (req, res, next) => {
+    try {
+        if (req.user.role !== 2) {
+            return next(new ErrorResponse("Only job posters can access this resource", 403));
+        }
+
+        const jobs = await Job.find({ user: req.user.id })
+            .populate('jobType', 'jobTypeName')
+            .sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            count: jobs.length,
+            jobs
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// job poster: update own job
+exports.updatePosterJob = async (req, res, next) => {
+    try {
+        if (req.user.role !== 2) {
+            return next(new ErrorResponse("Only job posters can update jobs", 403));
+        }
+
+        const job = await Job.findById(req.params.job_id);
+        if (!job) {
+            return next(new ErrorResponse("Job not found", 404));
+        }
+
+        if (String(job.user) !== String(req.user.id)) {
+            return next(new ErrorResponse("You are not allowed to update this job", 403));
+        }
+
+        const allowedFields = ['title', 'description', 'salary', 'location', 'jobType'];
+        const payload = {};
+        allowedFields.forEach((field) => {
+            if (req.body[field] !== undefined) payload[field] = req.body[field];
+        });
+
+        // Keep company fields aligned with poster profile.
+        payload.companyName = (req.user.companyName || "").trim();
+        payload.companyLogo = (req.user.companyLogo || "").trim();
+
+        const updatedJob = await Job.findByIdAndUpdate(
+            req.params.job_id,
+            payload,
+            { new: true, runValidators: true }
+        ).populate('jobType', 'jobTypeName');
+
+        res.status(200).json({
+            success: true,
+            job: updatedJob
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// job poster: delete own job
+exports.deletePosterJob = async (req, res, next) => {
+    try {
+        if (req.user.role !== 2) {
+            return next(new ErrorResponse("Only job posters can delete jobs", 403));
+        }
+
+        const job = await Job.findById(req.params.job_id);
+        if (!job) {
+            return next(new ErrorResponse("Job not found", 404));
+        }
+
+        if (String(job.user) !== String(req.user.id)) {
+            return next(new ErrorResponse("You are not allowed to delete this job", 403));
+        }
+
+        await Job.findByIdAndDelete(req.params.job_id);
+
+        res.status(200).json({
+            success: true,
+            message: "Job deleted successfully"
+        });
+    } catch (error) {
+        next(error);
+    }
+};

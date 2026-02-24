@@ -12,7 +12,6 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import Divider from '@mui/material/Divider';
-import WorkIcon from '@mui/icons-material/Work';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -21,17 +20,18 @@ import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { userLogoutAction } from '../redux/actions/userAction';
+import logoDashboard from '../images/hr-project.png';
 
 const Navbar = () => {
   const { userInfo } = useSelector((state) => state.signIn);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
+  const [anchorElNav,  setAnchorElNav]  = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
-  const handleOpenNavMenu  = (e) => setAnchorElNav(e.currentTarget);
-  const handleOpenUserMenu = (e) => setAnchorElUser(e.currentTarget);
+  const handleOpenNavMenu   = (e) => setAnchorElNav(e.currentTarget);
+  const handleOpenUserMenu  = (e) => setAnchorElUser(e.currentTarget);
   const handleCloseNavMenu  = () => setAnchorElNav(null);
   const handleCloseUserMenu = () => setAnchorElUser(null);
 
@@ -60,6 +60,23 @@ const Navbar = () => {
     return 'Job Seeker';
   };
 
+  // Shared logo mark component
+  const LogoMark = ({ size = 34, fontSize = 18 }) => (
+    <Box sx={{
+      width: size, height: size, borderRadius: `${size * 0.26}px`,
+      overflow: 'hidden',
+      border: '1.5px solid rgba(31,79,216,0.15)',
+      flexShrink: 0,
+    }}>
+      <Box
+        component="img"
+        src={logoDashboard}
+        alt="Hirely"
+        sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
+      />
+    </Box>
+  );
+
   return (
     <AppBar
       position="fixed"
@@ -80,17 +97,11 @@ const Navbar = () => {
             to={getHomePath()}
             sx={{
               display: { xs: 'none', md: 'flex' },
-              alignItems: 'center', gap: 0.75,
+              alignItems: 'center', gap: 0.9,
               textDecoration: 'none', mr: 4,
             }}
           >
-            <Box sx={{
-              width: 34, height: 34, borderRadius: '9px',
-              background: 'linear-gradient(135deg, #2f80ed, #0a2463)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
-              <WorkIcon sx={{ color: '#fff', fontSize: 18 }} />
-            </Box>
+            <LogoMark size={34} />
             <Typography sx={{
               fontFamily: "'Syne', sans-serif",
               fontWeight: 800, fontSize: '1.35rem',
@@ -133,17 +144,11 @@ const Navbar = () => {
             to={getHomePath()}
             sx={{
               display: { xs: 'flex', md: 'none' },
-              alignItems: 'center', gap: 0.75,
+              alignItems: 'center', gap: 0.8,
               textDecoration: 'none', flexGrow: 1,
             }}
           >
-            <Box sx={{
-              width: 30, height: 30, borderRadius: '8px',
-              background: 'linear-gradient(135deg, #2f80ed, #0a2463)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
-              <WorkIcon sx={{ color: '#fff', fontSize: 16 }} />
-            </Box>
+            <LogoMark size={30} />
             <Typography sx={{
               fontFamily: "'Syne', sans-serif",
               fontWeight: 800, fontSize: '1.2rem',
@@ -157,8 +162,8 @@ const Navbar = () => {
           {/* ── DESKTOP NAV LINKS ── */}
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, gap: 0.5 }}>
             {[
-              { label: 'Home', to: getHomePath() },
-              { label: 'Browse Jobs', to: '/jobs' },
+              { label: 'Home',        to: getHomePath() },
+              { label: 'Browse Jobs', to: '/jobs'       },
             ].map((item) => (
               <Button
                 key={item.label}
@@ -180,14 +185,12 @@ const Navbar = () => {
           {/* ── RIGHT SIDE ── */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
 
-            {/* Not logged in → show Login + Register */}
+            {/* Not logged in → Sign In + Get Started */}
             {!userInfo && (
               <>
                 <Button
-                  component={Link}
-                  to="/login"
-                  variant="outlined"
-                  size="small"
+                  component={Link} to="/login"
+                  variant="outlined" size="small"
                   sx={{
                     display: { xs: 'none', md: 'flex' },
                     textTransform: 'none', fontWeight: 600,
@@ -199,10 +202,8 @@ const Navbar = () => {
                   Sign In
                 </Button>
                 <Button
-                  component={Link}
-                  to="/register"
-                  variant="contained"
-                  size="small"
+                  component={Link} to="/register"
+                  variant="contained" size="small"
                   sx={{
                     display: { xs: 'none', md: 'flex' },
                     textTransform: 'none', fontWeight: 600,
@@ -221,7 +222,7 @@ const Navbar = () => {
               </>
             )}
 
-            {/* Avatar menu */}
+            {/* Avatar menu trigger */}
             <Tooltip title={userInfo ? userInfo.name || 'Account' : 'Account'}>
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0.5 }}>
                 <Avatar
@@ -239,7 +240,9 @@ const Navbar = () => {
                     '&:hover': { borderColor: '#2f80ed' },
                   }}
                 >
-                  {userInfo ? getInitials() : <PersonOutlineIcon sx={{ fontSize: 20, color: '#94a3b8' }} />}
+                  {userInfo
+                    ? getInitials()
+                    : <PersonOutlineIcon sx={{ fontSize: 20, color: '#94a3b8' }} />}
                 </Avatar>
               </IconButton>
             </Tooltip>
@@ -278,66 +281,42 @@ const Navbar = () => {
               )}
               {userInfo && <Divider sx={{ borderColor: '#dbeafe' }} />}
 
-              {/* Role-based dashboard link */}
+              {/* Role-based dashboard */}
               {userInfo?.role === 1 && (
-                <MenuItem
-                  component={Link} to="/admin/dashboard"
-                  onClick={handleCloseUserMenu}
-                  sx={{ gap: 1.5, py: 1.2, color: '#334155', fontSize: '0.9rem',
-                    '&:hover': { bgcolor: '#eff6ff', color: '#1e4fd8' } }}
-                >
+                <MenuItem component={Link} to="/admin/dashboard" onClick={handleCloseUserMenu}
+                  sx={{ gap: 1.5, py: 1.2, color: '#334155', fontSize: '0.9rem', '&:hover': { bgcolor: '#eff6ff', color: '#1e4fd8' } }}>
                   <DashboardOutlinedIcon fontSize="small" /> Admin Dashboard
                 </MenuItem>
               )}
               {userInfo?.role === 0 && (
-                <MenuItem
-                  component={Link} to="/user/dashboard"
-                  onClick={handleCloseUserMenu}
-                  sx={{ gap: 1.5, py: 1.2, color: '#334155', fontSize: '0.9rem',
-                    '&:hover': { bgcolor: '#eff6ff', color: '#1e4fd8' } }}
-                >
+                <MenuItem component={Link} to="/user/info" onClick={handleCloseUserMenu}
+                  sx={{ gap: 1.5, py: 1.2, color: '#334155', fontSize: '0.9rem', '&:hover': { bgcolor: '#eff6ff', color: '#1e4fd8' } }}>
                   <DashboardOutlinedIcon fontSize="small" /> My Dashboard
                 </MenuItem>
               )}
               {userInfo?.role === 2 && (
-                <MenuItem
-                  component={Link} to="/poster/dashboard"
-                  onClick={handleCloseUserMenu}
-                  sx={{ gap: 1.5, py: 1.2, color: '#334155', fontSize: '0.9rem',
-                    '&:hover': { bgcolor: '#eff6ff', color: '#1e4fd8' } }}
-                >
+                <MenuItem component={Link} to="/poster/dashboard" onClick={handleCloseUserMenu}
+                  sx={{ gap: 1.5, py: 1.2, color: '#334155', fontSize: '0.9rem', '&:hover': { bgcolor: '#eff6ff', color: '#1e4fd8' } }}>
                   <DashboardOutlinedIcon fontSize="small" /> Poster Dashboard
                 </MenuItem>
               )}
 
               {/* Not logged in options */}
               {!userInfo && (
-                <MenuItem
-                  component={Link} to="/login"
-                  onClick={handleCloseUserMenu}
-                  sx={{ gap: 1.5, py: 1.2, color: '#334155', fontSize: '0.9rem',
-                    '&:hover': { bgcolor: '#eff6ff', color: '#1e4fd8' } }}
-                >
+                <MenuItem component={Link} to="/login" onClick={handleCloseUserMenu}
+                  sx={{ gap: 1.5, py: 1.2, color: '#334155', fontSize: '0.9rem', '&:hover': { bgcolor: '#eff6ff', color: '#1e4fd8' } }}>
                   <LoginIcon fontSize="small" /> Sign In
                 </MenuItem>
               )}
               {!userInfo && (
-                <MenuItem
-                  component={Link} to="/admin/login"
-                  onClick={handleCloseUserMenu}
-                  sx={{ gap: 1.5, py: 1.2, color: '#334155', fontSize: '0.9rem',
-                    '&:hover': { bgcolor: '#eff6ff', color: '#1e4fd8' } }}
-                >
+                <MenuItem component={Link} to="/admin/login" onClick={handleCloseUserMenu}
+                  sx={{ gap: 1.5, py: 1.2, color: '#334155', fontSize: '0.9rem', '&:hover': { bgcolor: '#eff6ff', color: '#1e4fd8' } }}>
                   <LoginIcon fontSize="small" /> Admin Sign In
                 </MenuItem>
               )}
               {!userInfo && (
-                <MenuItem
-                  component={Link} to="/register"
-                  onClick={handleCloseUserMenu}
-                  sx={{ gap: 1.5, py: 1.2, color: '#334155', fontSize: '0.9rem',
-                    '&:hover': { bgcolor: '#eff6ff', color: '#1e4fd8' } }}
-                >
+                <MenuItem component={Link} to="/register" onClick={handleCloseUserMenu}
+                  sx={{ gap: 1.5, py: 1.2, color: '#334155', fontSize: '0.9rem', '&:hover': { bgcolor: '#eff6ff', color: '#1e4fd8' } }}>
                   <AppRegistrationIcon fontSize="small" /> Register
                 </MenuItem>
               )}
@@ -348,10 +327,7 @@ const Navbar = () => {
                   <Divider sx={{ borderColor: '#dbeafe' }} />
                   <MenuItem
                     onClick={() => { handleCloseUserMenu(); logOut(); }}
-                    sx={{
-                      gap: 1.5, py: 1.2, color: '#ef4444', fontSize: '0.9rem',
-                      '&:hover': { bgcolor: '#fef2f2' },
-                    }}
+                    sx={{ gap: 1.5, py: 1.2, color: '#ef4444', fontSize: '0.9rem', '&:hover': { bgcolor: '#fef2f2' } }}
                   >
                     <LogoutIcon fontSize="small" /> Log Out
                   </MenuItem>
@@ -359,6 +335,7 @@ const Navbar = () => {
               )}
             </Menu>
           </Box>
+
         </Toolbar>
       </Container>
     </AppBar>

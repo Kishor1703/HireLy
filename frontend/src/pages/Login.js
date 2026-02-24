@@ -1,4 +1,4 @@
-import { Box, Typography, TextField, Button, FormControl, InputLabel, MenuItem, Select, Divider, Chip } from '@mui/material';
+import { Box, Typography, TextField, Button,Divider } from '@mui/material';
 import React, { useEffect } from 'react';
 import Footer from '../components/Footer';
 import Navbar from '../components/NavBar';
@@ -41,7 +41,7 @@ const LogIn = ({ forcedRole }) => {
     if (isAuthenticated) {
       if (userInfo?.role === 1) navigate('/admin/dashboard');
       else if (userInfo?.role === 2) navigate('/poster/dashboard');
-      else navigate('/user/dashboard');
+      else navigate('/user/info');
     }
   }, [isAuthenticated, navigate, userInfo]);
 

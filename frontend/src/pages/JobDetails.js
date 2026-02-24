@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import {
   Box, Button, Chip, CircularProgress,
-  Container, Divider, Typography,
+  Container, Divider, TextField, Typography, Alert,
 } from '@mui/material';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import NavBar from '../components/NavBar';
 import Footer from '../components/Footer';
@@ -45,16 +45,36 @@ const InfoBadge = ({ icon, label, value }) => (
 
 const JobDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [job, setJob]       = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError]   = useState('');
+  const [applying, setApplying] = useState(false);
+  const [applyError, setApplyError] = useState('');
+  const [applySuccess, setApplySuccess] = useState('');
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    resume: '',
+  });
 
   // Pull role from Redux
   const { userInfo } = useSelector((state) => state.signIn || {});
   const isJobSeeker = userInfo?.role === 0;
   const isJobPoster = userInfo?.role === 2;
   const isAdmin     = userInfo?.role === 1;
-  const isLoggedOut = !userInfo;
+
+  useEffect(() => {
+    if (!userInfo) return;
+    setFormData((prev) => ({
+      ...prev,
+      firstName: prev.firstName || userInfo.firstName || '',
+      lastName: prev.lastName || userInfo.lastName || '',
+      email: prev.email || userInfo.email || '',
+    }));
+  }, [userInfo]);
 
   useEffect(() => {
     const fetchJob = async () => {
@@ -72,30 +92,138 @@ const JobDetails = () => {
   }, [id]);
 
   // ── Apply section — changes based on role ──────────────
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleApply = async () => {
+    if (!userInfo) {
+      navigate('/login?role=employee');
+      return;
+    }
+
+    if (userInfo.role !== 0) {
+      setApplyError('Only job seekers can apply for jobs.');
+      setApplySuccess('');
+      return;
+    }
+
+    if (
+      !formData.firstName.trim() ||
+      !formData.lastName.trim() ||
+      !formData.email.trim() ||
+      !formData.phone.trim() ||
+      !formData.resume.trim()
+    ) {
+      setApplyError('Please fill all fields and add your resume link.');
+      setApplySuccess('');
+      return;
+    }
+
+    setApplying(true);
+    setApplyError('');
+    setApplySuccess('');
+
+    try {
+      const payload = {
+        jobId: id,
+        firstName: formData.firstName.trim(),
+        lastName: formData.lastName.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        resume: formData.resume.trim(),
+      };
+
+      const { data } = await axios.post('/api/applications', payload);
+      setApplySuccess(data?.message || 'Application submitted successfully.');
+      setFormData((prev) => ({ ...prev, phone: '', resume: '' }));
+    } catch (err) {
+      setApplyError(err?.response?.data?.message || err?.response?.data?.error || 'Application failed');
+    } finally {
+      setApplying(false);
+    }
+  };
+
   const renderApplySection = () => {
 
     // ✅ Job Seeker — can apply
     if (isJobSeeker) {
       return (
-        <Button
-          variant="contained"
-          startIcon={<SendOutlinedIcon />}
-          fullWidth
-          sx={{
-            py: 1.4, borderRadius: '12px',
-            fontWeight: 700, fontSize: '1rem', textTransform: 'none',
-            background: 'linear-gradient(135deg, #2f80ed, #1e4fd8)',
-            boxShadow: '0 4px 14px rgba(31,79,216,0.3)',
-            '&:hover': {
-              background: 'linear-gradient(135deg, #1e4fd8, #0a2463)',
-              transform: 'translateY(-1px)',
-              boxShadow: '0 6px 20px rgba(10,36,99,0.3)',
-            },
-            transition: 'all 0.2s',
-          }}
-        >
-          Apply for this Position
-        </Button>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.4 }}>
+          <Typography sx={{ fontWeight: 700, color: '#0a2463', fontSize: '0.95rem' }}>
+            Apply for this Position
+          </Typography>
+
+          {applyError && <Alert severity="error">{applyError}</Alert>}
+          {applySuccess && <Alert severity="success">{applySuccess}</Alert>}
+
+          <Box sx={{ display: 'grid', gap: 1.2, gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' } }}>
+            <TextField
+              size="small"
+              name="firstName"
+              label="First Name"
+              value={formData.firstName}
+              onChange={handleInputChange}
+            />
+            <TextField
+              size="small"
+              name="lastName"
+              label="Last Name"
+              value={formData.lastName}
+              onChange={handleInputChange}
+            />
+          </Box>
+
+          <Box sx={{ display: 'grid', gap: 1.2, gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' } }}>
+            <TextField
+              size="small"
+              type="email"
+              name="email"
+              label="Email"
+              value={formData.email}
+              onChange={handleInputChange}
+            />
+            <TextField
+              size="small"
+              name="phone"
+              label="Phone Number"
+              value={formData.phone}
+              onChange={handleInputChange}
+            />
+          </Box>
+
+          <TextField
+            size="small"
+            name="resume"
+            label="Resume Link"
+            placeholder="https://..."
+            value={formData.resume}
+            onChange={handleInputChange}
+          />
+
+          <Button
+            variant="contained"
+            startIcon={<SendOutlinedIcon />}
+            onClick={handleApply}
+            disabled={applying}
+            fullWidth
+            sx={{
+              py: 1.4, borderRadius: '12px',
+              fontWeight: 700, fontSize: '1rem', textTransform: 'none',
+              background: 'linear-gradient(135deg, #2f80ed, #1e4fd8)',
+              boxShadow: '0 4px 14px rgba(31,79,216,0.3)',
+              '&:hover': {
+                background: 'linear-gradient(135deg, #1e4fd8, #0a2463)',
+                transform: 'translateY(-1px)',
+                boxShadow: '0 6px 20px rgba(10,36,99,0.3)',
+              },
+              transition: 'all 0.2s',
+            }}
+          >
+            {applying ? 'Submitting...' : 'Apply for this Position'}
+          </Button>
+        </Box>
       );
     }
 
