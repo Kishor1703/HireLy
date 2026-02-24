@@ -82,21 +82,36 @@ const CardElement = ({ jobTitle, description, category, location, companyName, c
 
       {/* Buttons */}
       <Box sx={{ display: 'flex', gap: 1 }}>
-        <Button
-          component={Link} to={`/job/${id}`}
-          variant="outlined" size="small"
-          endIcon={<OpenInNewOutlinedIcon sx={{ fontSize: '13px !important' }} />}
-          sx={{
-            flex: 1,
-            borderRadius: '10px', textTransform: 'none',
-            fontWeight: 600, fontSize: '0.82rem',
-            borderColor: '#dbeafe', color: '#1e4fd8',
-            px: 2,
-            '&:hover': { bgcolor: '#eff6ff', borderColor: '#2f80ed' },
-          }}
-        >
-          Details
-        </Button>
+        {id ? (
+          <Button
+            component={Link} to={`/job/${id}`}
+            variant="outlined" size="small"
+            endIcon={<OpenInNewOutlinedIcon sx={{ fontSize: '13px !important' }} />}
+            sx={{
+              flex: 1,
+              borderRadius: '10px', textTransform: 'none',
+              fontWeight: 600, fontSize: '0.82rem',
+              borderColor: '#dbeafe', color: '#1e4fd8',
+              px: 2,
+              '&:hover': { bgcolor: '#eff6ff', borderColor: '#2f80ed' },
+            }}
+          >
+            Details
+          </Button>
+        ) : (
+          <Button
+            variant="outlined" size="small" disabled
+            sx={{
+              flex: 1,
+              borderRadius: '10px', textTransform: 'none',
+              fontWeight: 600, fontSize: '0.82rem',
+              borderColor: '#dbeafe', color: '#94a3b8',
+              px: 2,
+            }}
+          >
+            Details unavailable
+          </Button>
+        )}
       </Box>
     </Box>
   );

@@ -50,6 +50,7 @@ const JobDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError]   = useState('');
   const [applying, setApplying] = useState(false);
+  const [alreadyApplied, setAlreadyApplied] = useState(false);
   const [applyError, setApplyError] = useState('');
   const [applySuccess, setApplySuccess] = useState('');
   const [formData, setFormData] = useState({
@@ -77,6 +78,41 @@ const JobDetails = () => {
   }, [userInfo]);
 
   useEffect(() => {
+    const loadUserProfileForApplyPrefill = async () => {
+      if (!userInfo || userInfo.role !== 0) return;
+      try {
+        const [profileResult, applicationsResult] = await Promise.allSettled([
+          axios.get('/api/me'),
+          axios.get('/api/applications/me'),
+        ]);
+
+        const profile = profileResult.status === 'fulfilled'
+          ? (profileResult.value?.data?.user || {})
+          : {};
+
+        const applications = applicationsResult.status === 'fulfilled'
+          ? (applicationsResult.value?.data?.applications || [])
+          : [];
+
+        const latestApplication = applications[0] || {};
+
+        setFormData((prev) => ({
+          ...prev,
+          firstName: prev.firstName || latestApplication.firstName || profile.firstName || '',
+          lastName: prev.lastName || latestApplication.lastName || profile.lastName || '',
+          email: prev.email || latestApplication.email || profile.email || '',
+          phone: prev.phone || latestApplication.phone || profile.phone || '',
+          resume: prev.resume || latestApplication.resume || profile.resume || '',
+        }));
+      } catch (error) {
+        // Ignore prefill failure and keep manual entry available.
+      }
+    };
+
+    loadUserProfileForApplyPrefill();
+  }, [userInfo]);
+
+  useEffect(() => {
     const fetchJob = async () => {
       setLoading(true); setError('');
       try {
@@ -90,6 +126,44 @@ const JobDetails = () => {
     };
     fetchJob();
   }, [id]);
+
+  useEffect(() => {
+    const checkAppliedStatus = async () => {
+      if (!userInfo || userInfo.role !== 0) {
+        setAlreadyApplied(false);
+        return;
+      }
+
+      try {
+        const { data } = await axios.get('/api/applications/me');
+        const hasApplied = (data?.applications || []).some((application) => (
+          String(application?.job?._id || '') === String(id)
+        ));
+        setAlreadyApplied(hasApplied);
+      } catch (error) {
+        try {
+          const profile = await axios.get('/api/me');
+          const history = profile?.data?.user?.jobsHistory || [];
+          const hasAppliedFromHistory = history.some((entry) => (
+            String(entry?.jobId || '') === String(id)
+            || (
+              job
+              && (entry?.title || '').trim().toLowerCase() === (job?.title || '').trim().toLowerCase()
+              && (
+                !entry?.location
+                || (entry?.location || '').trim().toLowerCase() === (job?.location || '').trim().toLowerCase()
+              )
+            )
+          ));
+          setAlreadyApplied(hasAppliedFromHistory);
+        } catch (fallbackError) {
+          setAlreadyApplied(false);
+        }
+      }
+    };
+
+    checkAppliedStatus();
+  }, [id, job, userInfo]);
 
   // ── Apply section — changes based on role ──────────────
   const handleInputChange = (event) => {
@@ -106,6 +180,12 @@ const JobDetails = () => {
     if (userInfo.role !== 0) {
       setApplyError('Only job seekers can apply for jobs.');
       setApplySuccess('');
+      return;
+    }
+
+    if (alreadyApplied) {
+      setApplyError('');
+      setApplySuccess('You have already applied for this job.');
       return;
     }
 
@@ -137,9 +217,15 @@ const JobDetails = () => {
 
       const { data } = await axios.post('/api/applications', payload);
       setApplySuccess(data?.message || 'Application submitted successfully.');
-      setFormData((prev) => ({ ...prev, phone: '', resume: '' }));
+      setAlreadyApplied(true);
     } catch (err) {
-      setApplyError(err?.response?.data?.message || err?.response?.data?.error || 'Application failed');
+      const backendMessage = err?.response?.data?.message || err?.response?.data?.error || 'Application failed';
+      setApplyError(backendMessage);
+      if (String(backendMessage).toLowerCase().includes('already applied')) {
+        setAlreadyApplied(true);
+        setApplyError('');
+        setApplySuccess('You have already applied for this job.');
+      }
     } finally {
       setApplying(false);
     }
@@ -149,6 +235,19 @@ const JobDetails = () => {
 
     // ✅ Job Seeker — can apply
     if (isJobSeeker) {
+      if (alreadyApplied) {
+        return (
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.2 }}>
+            <Typography sx={{ fontWeight: 700, color: '#0a2463', fontSize: '0.95rem' }}>
+              Application Status
+            </Typography>
+            <Alert severity="info">
+              You have already applied for this job.
+            </Alert>
+          </Box>
+        );
+      }
+
       return (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.4 }}>
           <Typography sx={{ fontWeight: 700, color: '#0a2463', fontSize: '0.95rem' }}>
