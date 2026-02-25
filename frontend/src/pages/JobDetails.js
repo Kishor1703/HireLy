@@ -60,6 +60,7 @@ const JobDetails = () => {
     phone: '',
     resume: '',
   });
+  const [resumeFileName, setResumeFileName] = useState('');
 
   // Pull role from Redux
   const { userInfo } = useSelector((state) => state.signIn || {});
@@ -171,6 +172,28 @@ const JobDetails = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleResumeFileChange = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      setResumeFileName('');
+      setFormData((prev) => ({ ...prev, resume: '' }));
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setFormData((prev) => ({ ...prev, resume: String(reader.result || '') }));
+      setResumeFileName(file.name);
+    };
+    reader.onerror = () => {
+      setApplyError('Failed to read resume file. Please try again.');
+      setApplySuccess('');
+      setResumeFileName('');
+      setFormData((prev) => ({ ...prev, resume: '' }));
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleApply = async () => {
     if (!userInfo) {
       navigate('/login?role=employee');
@@ -196,7 +219,7 @@ const JobDetails = () => {
       !formData.phone.trim() ||
       !formData.resume.trim()
     ) {
-      setApplyError('Please fill all fields and add your resume link.');
+      setApplyError('Please fill all fields and upload your resume.');
       setApplySuccess('');
       return;
     }
@@ -292,14 +315,34 @@ const JobDetails = () => {
             />
           </Box>
 
-          <TextField
-            size="small"
-            name="resume"
-            label="Resume Link"
-            placeholder="https://..."
-            value={formData.resume}
-            onChange={handleInputChange}
-          />
+          <Box>
+            <Button
+              variant="outlined"
+              component="label"
+              fullWidth
+              sx={{
+                textTransform: 'none',
+                justifyContent: 'flex-start',
+                py: 1.2,
+                borderRadius: '10px',
+                borderColor: '#d1d5db',
+                color: '#0a2463',
+              }}
+            >
+              {resumeFileName ? `Resume: ${resumeFileName}` : 'Upload Resume'}
+              <input
+                type="file"
+                accept=".pdf,.doc,.docx"
+                hidden
+                onChange={handleResumeFileChange}
+              />
+            </Button>
+            {!resumeFileName && (
+              <Typography sx={{ fontSize: '0.75rem', color: '#64748b', mt: 0.7 }}>
+                Accepted: PDF, DOC, DOCX
+              </Typography>
+            )}
+          </Box>
 
           <Button
             variant="contained"

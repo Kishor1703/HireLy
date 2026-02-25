@@ -79,6 +79,11 @@ const PosterApplications = () => {
     return Array.from(map.values());
   }, [applications]);
 
+  const getResumeTypeLabel = (resume) => {
+    if (!resume) return 'Resume unavailable';
+    return String(resume).startsWith('data:') ? 'Download Resume' : 'Open Resume';
+  };
+
   return (
     <Box>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
@@ -222,10 +227,12 @@ const PosterApplications = () => {
                   href={app.resume}
                   target="_blank"
                   rel="noreferrer"
+                  download={String(app.resume || '').startsWith('data:') ? `${(app.firstName || 'candidate').toLowerCase()}-resume` : undefined}
                   variant="outlined"
                   size="small"
                   startIcon={<DescriptionOutlinedIcon sx={{ fontSize: '15px !important' }} />}
                   endIcon={<OpenInNewOutlinedIcon sx={{ fontSize: '14px !important' }} />}
+                  disabled={!app.resume}
                   sx={{
                     textTransform: 'none',
                     borderRadius: '9px',
@@ -235,7 +242,7 @@ const PosterApplications = () => {
                     '&:hover': { bgcolor: '#eff6ff', borderColor: '#2f80ed' },
                   }}
                 >
-                  Open Resume
+                  {getResumeTypeLabel(app.resume)}
                 </Button>
               </Box>
             ))}

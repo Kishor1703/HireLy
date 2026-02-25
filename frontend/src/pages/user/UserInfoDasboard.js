@@ -57,6 +57,7 @@ const UserInfoDashboard = () => {
     phone: '',
     resume: '',
   });
+  const [resumeFileName, setResumeFileName] = useState('');
 
   useEffect(() => {
     if (!user) dispatch(userProfileAction());
@@ -64,13 +65,24 @@ const UserInfoDashboard = () => {
 
   useEffect(() => {
     if (!user) return;
+    const existingResume = user.resume || '';
     setFormData({
       firstName: user.firstName || '',
       lastName: user.lastName || '',
       email: user.email || '',
       phone: user.phone || '',
-      resume: user.resume || '',
+      resume: existingResume,
     });
+    if (existingResume) {
+      if (existingResume.startsWith('data:')) {
+        setResumeFileName('Resume uploaded');
+      } else {
+        const parts = existingResume.split('/');
+        setResumeFileName(parts[parts.length - 1] || 'Resume link');
+      }
+    } else {
+      setResumeFileName('');
+    }
   }, [user]);
 
   const role = user?.role ?? 0;
@@ -85,13 +97,41 @@ const UserInfoDashboard = () => {
     setIsEditing(false);
     setSuccessMessage('');
     setErrorMessage('');
+    const existingResume = user?.resume || '';
     setFormData({
       firstName: user?.firstName || '',
       lastName: user?.lastName || '',
       email: user?.email || '',
       phone: user?.phone || '',
-      resume: user?.resume || '',
+      resume: existingResume,
     });
+    if (existingResume) {
+      if (existingResume.startsWith('data:')) {
+        setResumeFileName('Resume uploaded');
+      } else {
+        const parts = existingResume.split('/');
+        setResumeFileName(parts[parts.length - 1] || 'Resume link');
+      }
+    } else {
+      setResumeFileName('');
+    }
+  };
+
+  const handleResumeFileChange = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setFormData((prev) => ({ ...prev, resume: String(reader.result || '') }));
+      setResumeFileName(file.name);
+    };
+    reader.onerror = () => {
+      setErrorMessage('Failed to read resume file. Please try again.');
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSave = async () => {
@@ -219,10 +259,10 @@ const UserInfoDashboard = () => {
               <InfoRow icon={<PhoneOutlinedIcon />} label="Phone Number" value={user?.phone} />
               <InfoRow
                 icon={<DescriptionOutlinedIcon />}
-                label="Resume Link"
+                label="Resume"
                 value={user?.resume ? (
                   <a href={user.resume} target="_blank" rel="noreferrer" style={{ color: '#1e4fd8', textDecoration: 'none' }}>
-                    Open Resume
+                    {String(user.resume).startsWith('data:') ? 'Download Resume' : 'Open Resume'}
                   </a>
                 ) : '-'}
               />
@@ -249,7 +289,31 @@ const UserInfoDashboard = () => {
             <TextField name="lastName" label="Last Name" size="small" value={formData.lastName} onChange={handleChange} />
             <TextField name="email" label="Email" type="email" size="small" value={formData.email} onChange={handleChange} />
             <TextField name="phone" label="Phone Number" size="small" value={formData.phone} onChange={handleChange} />
-            <TextField name="resume" label="Resume Link" size="small" value={formData.resume} onChange={handleChange} />
+            <Box>
+              <Button
+                variant="outlined"
+                component="label"
+                fullWidth
+                sx={{
+                  textTransform: 'none',
+                  justifyContent: 'flex-start',
+                  borderRadius: '10px',
+                  borderColor: '#d1d5db',
+                  color: '#0a2463',
+                }}
+              >
+                {resumeFileName ? `Resume: ${resumeFileName}` : 'Upload Resume'}
+                <input
+                  type="file"
+                  accept=".pdf,.doc,.docx"
+                  hidden
+                  onChange={handleResumeFileChange}
+                />
+              </Button>
+              <Typography sx={{ fontSize: '0.75rem', color: '#64748b', mt: 0.7 }}>
+                Accepted: PDF, DOC, DOCX
+              </Typography>
+            </Box>
             <Box sx={{ display: 'flex', gap: 1 }}>
               <Button
                 variant="contained"
