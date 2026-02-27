@@ -64,6 +64,9 @@ const App = () => {
             <Route path='/poster/company-profile' element={<UserRoute allowedRoles={[2]}><CompanyProfileHOC /></UserRoute>} />
             <Route path='/poster/applications' element={<UserRoute allowedRoles={[2]}><PosterApplicationsHOC /></UserRoute>} />
             <Route path='/admin/dashboard' element={<UserRoute allowedRoles={[1]}><AdminDashboardHOC /></UserRoute>} />
+            <Route path='/admin/users' element={<UserRoute allowedRoles={[1]}><AdminDashboardHOC /></UserRoute>} />
+            <Route path='/admin/companies' element={<UserRoute allowedRoles={[1]}><AdminDashboardHOC /></UserRoute>} />
+            <Route path='/admin/jobs' element={<UserRoute allowedRoles={[1]}><AdminDashboardHOC /></UserRoute>} />
             <Route path='/admin/category' element={<UserRoute allowedRoles={[1]}><AdminCategoryHOC /></UserRoute>} />
             <Route path='/user/jobs' element={<UserRoute allowedRoles={[0]}><UserJobsHistoryHOC /></UserRoute>} />
             <Route path='/user/info' element={<UserRoute allowedRoles={[0]}><UserInfoDasboardHOC /></UserRoute>} />

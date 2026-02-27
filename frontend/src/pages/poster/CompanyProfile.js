@@ -9,6 +9,7 @@ import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import Chip from '@mui/material/Chip';
 
 const CompanyProfile = () => {
   const [companyName,    setCompanyName]    = useState('');
@@ -19,6 +20,7 @@ const CompanyProfile = () => {
   const [loading,  setLoading]  = useState(false);
   const [fetching, setFetching] = useState(true);
   const [dragOver, setDragOver] = useState(false);
+  const [companyApprovalStatus, setCompanyApprovalStatus] = useState('approved');
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -27,6 +29,7 @@ const CompanyProfile = () => {
         setCompanyName(data?.user?.companyName || '');
         setCompanyProfile(data?.user?.companyProfile || '');
         setCompanyLogo(data?.user?.companyLogo || '');
+        setCompanyApprovalStatus(data?.user?.companyApprovalStatus || 'approved');
       } catch (err) {
         setError(err?.response?.data?.error || 'Failed to load company profile');
       } finally {
@@ -108,6 +111,12 @@ const CompanyProfile = () => {
       <Divider sx={{ borderColor: '#dbeafe', mb: 3, mt: 2 }} />
 
       {/* Alerts */}
+      <Box sx={{ mb: 2 }}>
+        {companyApprovalStatus === 'approved' && <Chip label="Company Approved" color="success" size="small" />}
+        {companyApprovalStatus === 'pending' && <Chip label="Approval Pending" color="warning" size="small" />}
+        {companyApprovalStatus === 'rejected' && <Chip label="Approval Rejected" color="error" size="small" />}
+      </Box>
+
       {message && (
         <Box sx={{
           display: 'flex', alignItems: 'center', gap: 1,

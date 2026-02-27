@@ -333,16 +333,14 @@ const Navbar = () => {
               )}
 
               {/* Logout */}
+              {userInfo && <Divider sx={{ borderColor: '#dbeafe' }} />}
               {userInfo && (
-                <>
-                  <Divider sx={{ borderColor: '#dbeafe' }} />
-                  <MenuItem
-                    onClick={async () => { handleCloseUserMenu(); await logOut(); }}
-                    sx={{ gap: 1.5, py: 1.2, color: '#ef4444', fontSize: '0.9rem', '&:hover': { bgcolor: '#fef2f2' } }}
-                  >
-                    <LogoutIcon fontSize="small" /> Log Out
-                  </MenuItem>
-                </>
+                <MenuItem
+                  onClick={async () => { handleCloseUserMenu(); await logOut(); }}
+                  sx={{ gap: 1.5, py: 1.2, color: '#ef4444', fontSize: '0.9rem', '&:hover': { bgcolor: '#fef2f2' } }}
+                >
+                  <LogoutIcon fontSize="small" /> Log Out
+                </MenuItem>
               )}
             </Menu>
           </Box>
@@ -354,4 +352,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-

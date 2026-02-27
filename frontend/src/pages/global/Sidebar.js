@@ -1,7 +1,6 @@
 import React from 'react';
 import { Sidebar, Menu, MenuItem, menuClasses } from 'react-pro-sidebar';
 import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
-import GroupAddOutlinedIcon from '@mui/icons-material/GroupAddOutlined';
 import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
 import WorkHistoryOutlinedIcon from '@mui/icons-material/WorkHistoryOutlined';
@@ -24,10 +23,8 @@ const roleConfig = {
     label: 'Admin',
     color: '#f59e0b',
     items: [
-      { to: '/admin/dashboard', icon: <DashboardOutlinedIcon />, label: 'Dashboard' },
-      { to: '/admin/users',     icon: <GroupAddOutlinedIcon />,  label: 'Users'     },
-      { to: '/admin/jobs',      icon: <WorkOutlineIcon />,       label: 'Jobs'      },
-      { to: '/admin/category',  icon: <CategoryOutlinedIcon />,  label: 'Category'  },
+      { to: '/admin/dashboard', icon: <DashboardOutlinedIcon />,   label: 'Dashboard'  },
+      { to: '/admin/category',  icon: <CategoryOutlinedIcon />,    label: 'Category'   },
     ],
   },
   2: {
@@ -257,6 +254,5 @@ const SidebarAdm = () => {
 };
 
 export default SidebarAdm;
-
 
 

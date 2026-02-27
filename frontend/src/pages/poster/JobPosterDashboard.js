@@ -47,6 +47,7 @@ const JobPosterDashboard = () => {
   const [loading,     setLoading]     = useState(false);
   const [companyName, setCompanyName] = useState('');
   const [companyLogo, setCompanyLogo] = useState('');
+  const [companyApprovalStatus, setCompanyApprovalStatus] = useState('approved');
 
   useEffect(() => {
     axios.get('/api/type/jobs')
@@ -59,12 +60,17 @@ const JobPosterDashboard = () => {
       .then(({ data }) => {
         setCompanyName(data?.user?.companyName || '');
         setCompanyLogo(data?.user?.companyLogo || '');
+        setCompanyApprovalStatus(data?.user?.companyApprovalStatus || 'approved');
       })
       .catch(() => {});
   }, []);
 
   const submitJob = async (e) => {
     e.preventDefault();
+    if (companyApprovalStatus !== 'approved') {
+      setError('Your company is not approved yet. Please wait for admin approval.');
+      return;
+    }
     setMessage(''); setError(''); setLoading(true);
     try {
       await axios.post('/api/job/create', {
@@ -146,10 +152,42 @@ const JobPosterDashboard = () => {
               Posting as this company
             </Typography>
           </Box>
-          <Chip label="Verified" size="small" sx={{
-            ml: 'auto', bgcolor: '#dcfce7', color: '#16a34a',
-            fontWeight: 600, fontSize: '0.7rem', border: '1px solid #bbf7d0',
-          }} />
+          {companyApprovalStatus === 'approved' && (
+            <Chip label="Approved" size="small" sx={{
+              ml: 'auto', bgcolor: '#dcfce7', color: '#16a34a',
+              fontWeight: 600, fontSize: '0.7rem', border: '1px solid #bbf7d0',
+            }} />
+          )}
+          {companyApprovalStatus === 'pending' && (
+            <Chip label="Pending Approval" size="small" sx={{
+              ml: 'auto', bgcolor: '#fffbeb', color: '#b45309',
+              fontWeight: 600, fontSize: '0.7rem', border: '1px solid #fde68a',
+            }} />
+          )}
+          {companyApprovalStatus === 'rejected' && (
+            <Chip label="Rejected" size="small" sx={{
+              ml: 'auto', bgcolor: '#fef2f2', color: '#ef4444',
+              fontWeight: 600, fontSize: '0.7rem', border: '1px solid #fecaca',
+            }} />
+          )}
+        </Box>
+      )}
+
+      {companyName && companyApprovalStatus !== 'approved' && (
+        <Box sx={{
+          display: 'flex', alignItems: 'center', gap: 1.2,
+          bgcolor: '#fffbeb', border: '1px solid #fde68a',
+          borderRadius: '12px', px: 2, py: 1.5, mb: 3,
+        }}>
+          <WarningAmberOutlinedIcon sx={{ color: '#f59e0b', fontSize: 20 }} />
+          <Box>
+            <Typography sx={{ fontWeight: 600, fontSize: '0.88rem', color: '#92400e' }}>
+              Company approval required
+            </Typography>
+            <Typography sx={{ fontSize: '0.8rem', color: '#b45309' }}>
+              You can post jobs only after an admin approves your company.
+            </Typography>
+          </Box>
         </Box>
       )}
 
@@ -252,7 +290,7 @@ const JobPosterDashboard = () => {
             <Button
               type="submit"
               variant="contained"
-              disabled={loading || !companyName}
+              disabled={loading || !companyName || companyApprovalStatus !== 'approved'}
               startIcon={loading
                 ? <CircularProgress size={16} sx={{ color: '#fff' }} />
                 : <SendOutlinedIcon />}
