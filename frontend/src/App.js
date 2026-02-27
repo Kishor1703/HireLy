@@ -6,7 +6,6 @@ import NotFound from './pages/NotFound';
 import {theme} from './theme';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import {ToastContainer} from 'react-toastify';
-import { ProSidebarProvider } from 'react-pro-sidebar';
 import 'react-toastify/dist/ReactToastify.css';
 import LogIn from './pages/Login';
 import Register from './pages/Register';
@@ -46,7 +45,6 @@ const App = () => {
       <ToastContainer/>
       <ThemeProvider theme={theme}>
         <CssBaseline/>
-        <ProSidebarProvider>
         <BrowserRouter>
           <Routes>
             <Route path='/' element={<CommonHome />} />
@@ -73,10 +71,6 @@ const App = () => {
             <Route path='*' element={<NotFound />} />
           </Routes>
         </BrowserRouter>
-        </ProSidebarProvider>
-        
-          
-        
       </ThemeProvider>
     </>
   )

@@ -12,7 +12,6 @@ import SearchIcon from '@mui/icons-material/Search';
 // import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 // import Badge from '@mui/material/Badge';
 import Tooltip from '@mui/material/Tooltip';
-import { useProSidebar } from 'react-pro-sidebar';
 
 const SearchWrapper = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -65,15 +64,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const HeaderTop = () => {
-  const { collapseSidebar, toggleSidebar, broken } = useProSidebar();
-
+const HeaderTop = ({ broken, setCollapsed, setToggled }) => {
   const handleSidebarToggle = () => {
     if (broken) {
-      toggleSidebar();
+      setToggled((prev) => !prev);
       return;
     }
-    collapseSidebar();
+    setCollapsed((prev) => !prev);
   };
 
   return (
@@ -137,7 +134,7 @@ const HeaderTop = () => {
               <SearchIcon sx={{ fontSize: 18 }} />
             </SearchIconWrapper>
             <StyledInputBase
-              placeholder="Search…"
+              placeholder="Search..."
               inputProps={{ 'aria-label': 'search' }}
             />
           </SearchWrapper>
@@ -167,5 +164,3 @@ const HeaderTop = () => {
 };
 
 export default HeaderTop;
-
-

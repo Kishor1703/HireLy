@@ -15,7 +15,6 @@ import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { userLogoutAction } from '../../redux/actions/userAction';
 import { useNavigate } from 'react-router-dom';
-import { useProSidebar } from 'react-pro-sidebar';
 import logoDashboard from '../../images/hr-project.png';
 
 const roleConfig = {
@@ -49,9 +48,8 @@ const roleConfig = {
   },
 };
 
-const SidebarAdm = () => {
+const SidebarAdm = ({ collapsed, toggled, broken, setToggled, setBroken }) => {
   const { userInfo } = useSelector((state) => state.signIn);
-  const { collapsed, broken, toggled, toggleSidebar } = useProSidebar();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -92,8 +90,10 @@ const SidebarAdm = () => {
   return (
     <Sidebar
       breakPoint="md"
+      collapsed={collapsed}
       toggled={toggled}
-      onBackdropClick={() => toggleSidebar(false)}
+      onBreakPoint={setBroken}
+      onBackdropClick={() => setToggled(false)}
       backgroundColor="transparent"
       style={{
         background: 'linear-gradient(180deg, #0a2463 0%, #0d3080 60%, #0a2463 100%)',
@@ -104,7 +104,7 @@ const SidebarAdm = () => {
     >
       <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between' }}>
 
-        {/* ── TOP ── */}
+        {/* TOP */}
         <Box>
           {/* Logo area */}
           <Box sx={{
@@ -114,7 +114,7 @@ const SidebarAdm = () => {
             mb: 1,
           }}>
             {collapsed ? (
-              // Collapsed — small square logo only
+              // Collapsed - small square logo only
               <Box sx={{
                 width: 48, height: 48, borderRadius: '100px',
                 overflow: 'hidden',
@@ -128,7 +128,7 @@ const SidebarAdm = () => {
                 />
               </Box>
             ) : (
-              // Expanded — logo image + brand text
+              // Expanded - logo image + brand text
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
                 <Box sx={{
                   width: 60, height: 60, borderRadius: '16px',
@@ -207,7 +207,7 @@ const SidebarAdm = () => {
                 icon={item.icon}
                 onClick={() => {
                   if (broken) {
-                    toggleSidebar(false);
+                    setToggled(false);
                   }
                 }}
               >
@@ -217,7 +217,7 @@ const SidebarAdm = () => {
           </Menu>
         </Box>
 
-        {/* ── BOTTOM ── */}
+        {/* BOTTOM */}
         <Box sx={{ pb: 2 }}>
           <Box sx={{ mx: 2, mb: 1, borderTop: '1px solid rgba(255,255,255,0.07)', pt: 1 }} />
           <Menu
@@ -237,7 +237,7 @@ const SidebarAdm = () => {
             <MenuItem
               onClick={() => {
                 if (broken) {
-                  toggleSidebar(false);
+                  setToggled(false);
                 }
                 logOut();
               }}
@@ -254,5 +254,3 @@ const SidebarAdm = () => {
 };
 
 export default SidebarAdm;
-
-
