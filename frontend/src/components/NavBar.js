@@ -54,8 +54,7 @@ const Navbar = () => {
   };
 
   const getInitials = () => {
-    const displayName = getDisplayName();
-    return displayName.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
+    return getDisplayName().split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
   };
 
   const getRoleLabel = () => {
@@ -65,10 +64,10 @@ const Navbar = () => {
     return 'Job Seeker';
   };
 
-  // Shared logo mark component
-  const LogoMark = ({ size = 56 }) => (
+  const LogoMark = ({ size = 52 }) => (
     <Box sx={{
-      width: size, height: size, borderRadius: `${size * 0.26}px`,
+      width: size, height: size,
+      borderRadius: `${size * 0.26}px`,
       overflow: 'hidden',
       border: '1.5px solid rgba(31,79,216,0.15)',
       flexShrink: 0,
@@ -77,13 +76,7 @@ const Navbar = () => {
         component="img"
         src={logoDashboard}
         alt="TalentSphere"
-        sx={{
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-          transform: 'scale(1.15)',
-          transformOrigin: 'center',
-        }}
+        sx={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scale(1.15)', transformOrigin: 'center' }}
       />
     </Box>
   );
@@ -93,14 +86,15 @@ const Navbar = () => {
       position="fixed"
       elevation={0}
       sx={{
-        background: 'rgba(255,255,255,0.92)',
-        backdropFilter: 'blur(16px)',
+        background: 'rgba(255,255,255,0.94)',
+        backdropFilter: 'blur(20px)',
         borderBottom: '1px solid rgba(31,79,216,0.1)',
         zIndex: 1200,
       }}
     >
       <Container maxWidth="lg">
-        <Toolbar disableGutters sx={{ height: 78 }}>
+        {/* ↑ Toolbar height bumped from 78 → 90px */}
+        <Toolbar disableGutters sx={{ height: 90 }}>
 
           {/* ── LOGO (desktop) ── */}
           <Box
@@ -108,14 +102,16 @@ const Navbar = () => {
             to={getHomePath()}
             sx={{
               display: { xs: 'none', md: 'flex' },
-              alignItems: 'center', gap: 0.9,
-              textDecoration: 'none', mr: 4,
+              alignItems: 'center', gap: 1.2,
+              textDecoration: 'none', mr: 5,
             }}
           >
-            <LogoMark size={56} />
+            {/* logo size: 56 → 64 */}
+            <LogoMark size={64} />
             <Typography sx={{
               fontFamily: "'Syne', sans-serif",
-              fontWeight: 800, fontSize: '1.45rem',
+              fontWeight: 800,
+              fontSize: '1.65rem',   // was 1.45rem
               letterSpacing: '-0.5px', color: '#0a2463',
               '& span': { color: '#2f80ed' },
             }}>
@@ -126,7 +122,7 @@ const Navbar = () => {
           {/* ── MOBILE hamburger ── */}
           <Box sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }}>
             <IconButton onClick={handleOpenNavMenu} sx={{ color: '#0a2463' }}>
-              <MenuIcon />
+              <MenuIcon sx={{ fontSize: 28 }} />
             </IconButton>
             <Menu
               anchorEl={anchorElNav}
@@ -140,12 +136,8 @@ const Navbar = () => {
                 },
               }}
             >
-              <MenuItem component={Link} to={getHomePath()} onClick={handleCloseNavMenu}>
-                Home
-              </MenuItem>
-              <MenuItem component={Link} to="/jobs" onClick={handleCloseNavMenu}>
-                Browse Jobs
-              </MenuItem>
+              <MenuItem component={Link} to={getHomePath()} onClick={handleCloseNavMenu}>Home</MenuItem>
+              <MenuItem component={Link} to="/jobs" onClick={handleCloseNavMenu}>Browse Jobs</MenuItem>
             </Menu>
           </Box>
 
@@ -155,14 +147,14 @@ const Navbar = () => {
             to={getHomePath()}
             sx={{
               display: { xs: 'flex', md: 'none' },
-              alignItems: 'center', gap: 0.8,
+              alignItems: 'center', gap: 1,
               textDecoration: 'none', flexGrow: 1,
             }}
           >
             <LogoMark size={46} />
             <Typography sx={{
               fontFamily: "'Syne', sans-serif",
-              fontWeight: 800, fontSize: '1.15rem',
+              fontWeight: 800, fontSize: '1.25rem',
               letterSpacing: '-0.5px', color: '#0a2463',
               '& span': { color: '#2f80ed' },
             }}>
@@ -181,9 +173,10 @@ const Navbar = () => {
                 component={Link}
                 to={item.to}
                 sx={{
-                  color: '#334155', fontWeight: 500, fontSize: '0.92rem',
-                  textTransform: 'none', borderRadius: '8px',
-                  px: 1.5, py: 0.75,
+                  color: '#334155', fontWeight: 600,
+                  fontSize: '1rem',       // was 0.92rem
+                  textTransform: 'none', borderRadius: '10px',
+                  px: 2, py: 1,           // slightly more padding
                   transition: 'all 0.2s',
                   '&:hover': { bgcolor: '#eff6ff', color: '#1e4fd8' },
                 }}
@@ -196,17 +189,17 @@ const Navbar = () => {
           {/* ── RIGHT SIDE ── */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
 
-            {/* Not logged in → Sign In + Get Started */}
             {!userInfo && (
               <>
                 <Button
                   component={Link} to="/login"
-                  variant="outlined" size="small"
+                  variant="outlined"
                   sx={{
                     display: { xs: 'none', md: 'flex' },
                     textTransform: 'none', fontWeight: 600,
-                    borderRadius: '9px', borderColor: '#1e4fd8',
-                    color: '#1e4fd8', px: 2,
+                    fontSize: '0.95rem',   // bigger
+                    borderRadius: '10px', borderColor: '#1e4fd8',
+                    color: '#1e4fd8', px: 2.5, py: 0.9,
                     '&:hover': { bgcolor: '#eff6ff', borderColor: '#0a2463', color: '#0a2463' },
                   }}
                 >
@@ -214,11 +207,12 @@ const Navbar = () => {
                 </Button>
                 <Button
                   component={Link} to="/register"
-                  variant="contained" size="small"
+                  variant="contained"
                   sx={{
                     display: { xs: 'none', md: 'flex' },
                     textTransform: 'none', fontWeight: 600,
-                    borderRadius: '9px', px: 2,
+                    fontSize: '0.95rem',   // bigger
+                    borderRadius: '10px', px: 2.5, py: 0.9,
                     background: 'linear-gradient(135deg, #2f80ed, #1e4fd8)',
                     boxShadow: '0 2px 10px rgba(31,79,216,0.25)',
                     '&:hover': {
@@ -233,18 +227,18 @@ const Navbar = () => {
               </>
             )}
 
-            {/* Avatar menu trigger */}
+            {/* Avatar — slightly bigger */}
             <Tooltip title={userInfo ? getDisplayName() : 'Account'}>
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0.5 }}>
                 <Avatar
                   src={userInfo?.avatar || ''}
                   sx={{
-                    width: 38, height: 38,
+                    width: 44, height: 44,   // was 38
                     background: userInfo
                       ? 'linear-gradient(135deg, #2f80ed, #0a2463)'
                       : '#e2e8f0',
                     color: '#fff',
-                    fontWeight: 700, fontSize: '0.85rem',
+                    fontWeight: 700, fontSize: '0.95rem',
                     border: '2px solid',
                     borderColor: userInfo ? '#dbeafe' : '#e2e8f0',
                     transition: 'border-color 0.2s',
@@ -253,12 +247,12 @@ const Navbar = () => {
                 >
                   {userInfo
                     ? getInitials()
-                    : <PersonOutlineIcon sx={{ fontSize: 20, color: '#94a3b8' }} />}
+                    : <PersonOutlineIcon sx={{ fontSize: 22, color: '#94a3b8' }} />}
                 </Avatar>
               </IconButton>
             </Tooltip>
 
-            {/* Dropdown Menu */}
+            {/* Dropdown */}
             <Menu
               anchorEl={anchorElUser}
               open={Boolean(anchorElUser)}
@@ -267,7 +261,7 @@ const Navbar = () => {
               anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
               PaperProps={{
                 sx: {
-                  mt: 1.5, borderRadius: '16px', minWidth: 220,
+                  mt: 1.5, borderRadius: '16px', minWidth: 230,
                   boxShadow: '0 12px 40px rgba(10,36,99,0.14)',
                   border: '1px solid #dbeafe', overflow: 'visible',
                   '&::before': {
@@ -279,72 +273,67 @@ const Navbar = () => {
                 },
               }}
             >
-              {/* Logged-in user header */}
               {userInfo && (
-                <Box sx={{ px: 2, py: 1.5 }}>
-                  <Typography sx={{ fontWeight: 700, color: '#0a2463', fontSize: '0.95rem' }}>
+                <Box sx={{ px: 2.5, py: 1.8 }}>
+                  <Typography sx={{ fontWeight: 700, color: '#0a2463', fontSize: '1rem' }}>
                     {getDisplayName()}
                   </Typography>
-                  <Typography sx={{ fontSize: '0.78rem', color: '#64748b' }}>
+                  <Typography sx={{ fontSize: '0.8rem', color: '#64748b' }}>
                     {getRoleLabel()}
                   </Typography>
                 </Box>
               )}
               {userInfo && <Divider sx={{ borderColor: '#dbeafe' }} />}
 
-              {/* Role-based dashboard */}
               {userInfo?.role === 1 && (
                 <MenuItem component={Link} to="/admin/dashboard" onClick={handleCloseUserMenu}
-                  sx={{ gap: 1.5, py: 1.2, color: '#334155', fontSize: '0.9rem', '&:hover': { bgcolor: '#eff6ff', color: '#1e4fd8' } }}>
+                  sx={{ gap: 1.5, py: 1.3, color: '#334155', fontSize: '0.92rem', '&:hover': { bgcolor: '#eff6ff', color: '#1e4fd8' } }}>
                   <DashboardOutlinedIcon fontSize="small" /> Admin Dashboard
                 </MenuItem>
               )}
               {userInfo?.role === 0 && (
                 <MenuItem component={Link} to="/user/info" onClick={handleCloseUserMenu}
-                  sx={{ gap: 1.5, py: 1.2, color: '#334155', fontSize: '0.9rem', '&:hover': { bgcolor: '#eff6ff', color: '#1e4fd8' } }}>
+                  sx={{ gap: 1.5, py: 1.3, color: '#334155', fontSize: '0.92rem', '&:hover': { bgcolor: '#eff6ff', color: '#1e4fd8' } }}>
                   <DashboardOutlinedIcon fontSize="small" /> My Dashboard
                 </MenuItem>
               )}
               {userInfo?.role === 2 && (
                 <MenuItem component={Link} to="/poster/dashboard" onClick={handleCloseUserMenu}
-                  sx={{ gap: 1.5, py: 1.2, color: '#334155', fontSize: '0.9rem', '&:hover': { bgcolor: '#eff6ff', color: '#1e4fd8' } }}>
+                  sx={{ gap: 1.5, py: 1.3, color: '#334155', fontSize: '0.92rem', '&:hover': { bgcolor: '#eff6ff', color: '#1e4fd8' } }}>
                   <DashboardOutlinedIcon fontSize="small" /> Poster Dashboard
                 </MenuItem>
               )}
 
-              {/* Not logged in options */}
               {!userInfo && (
                 <MenuItem component={Link} to="/login" onClick={handleCloseUserMenu}
-                  sx={{ gap: 1.5, py: 1.2, color: '#334155', fontSize: '0.9rem', '&:hover': { bgcolor: '#eff6ff', color: '#1e4fd8' } }}>
+                  sx={{ gap: 1.5, py: 1.3, color: '#334155', fontSize: '0.92rem', '&:hover': { bgcolor: '#eff6ff', color: '#1e4fd8' } }}>
                   <LoginIcon fontSize="small" /> Sign In
                 </MenuItem>
               )}
               {!userInfo && (
                 <MenuItem component={Link} to="/admin/login" onClick={handleCloseUserMenu}
-                  sx={{ gap: 1.5, py: 1.2, color: '#334155', fontSize: '0.9rem', '&:hover': { bgcolor: '#eff6ff', color: '#1e4fd8' } }}>
+                  sx={{ gap: 1.5, py: 1.3, color: '#334155', fontSize: '0.92rem', '&:hover': { bgcolor: '#eff6ff', color: '#1e4fd8' } }}>
                   <LoginIcon fontSize="small" /> Admin Sign In
                 </MenuItem>
               )}
               {!userInfo && (
                 <MenuItem component={Link} to="/register" onClick={handleCloseUserMenu}
-                  sx={{ gap: 1.5, py: 1.2, color: '#334155', fontSize: '0.9rem', '&:hover': { bgcolor: '#eff6ff', color: '#1e4fd8' } }}>
+                  sx={{ gap: 1.5, py: 1.3, color: '#334155', fontSize: '0.92rem', '&:hover': { bgcolor: '#eff6ff', color: '#1e4fd8' } }}>
                   <AppRegistrationIcon fontSize="small" /> Register
                 </MenuItem>
               )}
 
-              {/* Logout */}
               {userInfo && <Divider sx={{ borderColor: '#dbeafe' }} />}
               {userInfo && (
                 <MenuItem
                   onClick={async () => { handleCloseUserMenu(); await logOut(); }}
-                  sx={{ gap: 1.5, py: 1.2, color: '#ef4444', fontSize: '0.9rem', '&:hover': { bgcolor: '#fef2f2' } }}
+                  sx={{ gap: 1.5, py: 1.3, color: '#ef4444', fontSize: '0.92rem', '&:hover': { bgcolor: '#fef2f2' } }}
                 >
                   <LogoutIcon fontSize="small" /> Log Out
                 </MenuItem>
               )}
             </Menu>
           </Box>
-
         </Toolbar>
       </Container>
     </AppBar>

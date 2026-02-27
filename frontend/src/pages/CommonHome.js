@@ -7,11 +7,11 @@ import { Link } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 import Footer from '../components/Footer';
 
-const stats = [
-  { value: '1.2M+', label: 'Active Jobs' },
-  { value: '340K+', label: 'Companies' },
-  { value: '5M+',   label: 'Job Seekers' },
-];
+// const stats = [
+//   { value: '1.2M+', label: 'Active Jobs' },
+//   { value: '340K+', label: 'Companies' },
+//   { value: '5M+',   label: 'Job Seekers' },
+// ];
 
 const categories = [
   { icon: '💻', label: 'Technology' },
@@ -86,7 +86,7 @@ const CommonHome = () => {
         <Container maxWidth="md" sx={{ position: 'relative', zIndex: 1, textAlign: 'center', py: 6 }}>
 
           {/* Badge */}
-          <Chip
+          {/* <Chip
             label="✦  50,000+ Jobs Added This Week"
             size="small"
             sx={{
@@ -101,7 +101,7 @@ const CommonHome = () => {
                 to:   { opacity: 1, transform: 'translateY(0)' },
               },
             }}
-          />
+          /> */}
 
           {/* Headline */}
           <Typography
@@ -257,7 +257,7 @@ const CommonHome = () => {
           </Box>
 
           {/* Stats */}
-          <Stack
+          {/* <Stack
             direction="row"
             justifyContent="center"
             spacing={{ xs: 3, md: 6 }}
@@ -276,7 +276,7 @@ const CommonHome = () => {
                 </Typography>
               </Box>
             ))}
-          </Stack>
+          </Stack> */}
         </Container>
       </Box>
 
@@ -369,7 +369,7 @@ const CommonHome = () => {
                     <Typography sx={{
                       position: 'absolute', top: 12, right: 16,
                       fontWeight: 800, fontSize: '2.2rem',
-                      color: 'rgba(31,79,216,0.07)',
+                      color: 'rgba(0, 0, 0, 0.07)',
                     }}>
                       {step.num}
                     </Typography>

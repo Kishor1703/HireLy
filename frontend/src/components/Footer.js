@@ -117,7 +117,7 @@ const Footer = () => {
           </Box>
 
           {/* Stats */}
-          <Box>
+          {/* <Box>
             <Typography sx={{
               fontSize: '0.7rem', fontWeight: 700, color: 'rgba(255,255,255,0.35)',
               textTransform: 'uppercase', letterSpacing: '2px', mb: 1.5,
@@ -138,7 +138,7 @@ const Footer = () => {
                 </Typography>
               </Box>
             ))}
-          </Box>
+          </Box> */}
         </Box>
 
         {/* Bottom bar */}

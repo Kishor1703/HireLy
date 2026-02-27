@@ -3,11 +3,13 @@ import React from 'react';
 import headerImage from '../images/jobbg.png';
 import SearchInputEl from './SearchInputEl';
 
+const NAVBAR_HEIGHT = 90; // matches the updated Navbar height
+
 const Header = () => {
   return (
     <Box sx={{
       position: 'relative',
-      minHeight: 420,
+      minHeight: 520,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -15,6 +17,8 @@ const Header = () => {
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       overflow: 'hidden',
+      // Push entire header down so nothing hides under navbar
+      mt: `${NAVBAR_HEIGHT}px`,
     }}>
 
       {/* Dark blue gradient overlay */}
@@ -51,10 +55,14 @@ const Header = () => {
         position: 'relative', zIndex: 2,
         textAlign: 'center', px: 2,
         width: '100%', maxWidth: 700,
-        py: 6,
+        py: 7,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
       }}>
+
         {/* Badge */}
-        <Chip
+        {/* <Chip
           label="✦  1.2M+ Jobs Available Worldwide"
           size="small"
           sx={{
@@ -66,7 +74,7 @@ const Header = () => {
             borderRadius: '100px', px: 1,
             backdropFilter: 'blur(8px)',
           }}
-        />
+        /> */}
 
         {/* Headline */}
         <Typography sx={{
@@ -100,7 +108,7 @@ const Header = () => {
           Your next career move starts here.
         </Typography>
 
-        {/* Search bar */}
+        {/* Search bar — centred via parent flexbox */}
         <SearchInputEl />
 
         {/* Popular tags */}
@@ -119,10 +127,7 @@ const Header = () => {
                 backdropFilter: 'blur(6px)',
                 cursor: 'pointer',
                 transition: 'all 0.2s',
-                '&:hover': {
-                  bgcolor: 'rgba(255,255,255,0.2)',
-                  color: '#fff',
-                },
+                '&:hover': { bgcolor: 'rgba(255,255,255,0.2)', color: '#fff' },
               }}
             />
           ))}

@@ -29,7 +29,14 @@ const SearchInputEl = () => {
   });
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ width: { xs: '95%', sm: '80%', md: '680px' } }}>
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      sx={{
+        width: { xs: '95%', sm: '80%', md: '640px' },
+        mx: 'auto', // centres inside the flex column header
+      }}
+    >
       {/* Search bar */}
       <Box sx={{
         display: 'flex',
@@ -45,12 +52,9 @@ const SearchInputEl = () => {
           border: '1.5px solid rgba(47,128,237,0.5)',
         },
       }}>
+
         {/* Search icon */}
-        <Box sx={{
-          pl: 2, pr: 1,
-          display: 'flex', alignItems: 'center',
-          color: '#94a3b8',
-        }}>
+        <Box sx={{ pl: 2.5, pr: 1, display: 'flex', alignItems: 'center', color: '#94a3b8' }}>
           <SearchOutlinedIcon sx={{ fontSize: 22 }} />
         </Box>
 
@@ -64,8 +68,8 @@ const SearchInputEl = () => {
           onChange={handleChange}
           sx={{
             flex: 1,
-            py: 1.6, px: 1,
-            fontSize: '0.98rem',
+            py: 1.8, px: 1,
+            fontSize: '1rem',
             color: '#0a2463',
             '& input::placeholder': { color: '#94a3b8', opacity: 1 },
           }}
@@ -77,12 +81,12 @@ const SearchInputEl = () => {
           variant="contained"
           disabled={isSubmitting}
           sx={{
-            m: 0.6,
+            m: 0.7,
             px: { xs: 2, sm: 3.5 },
-            py: 1.3,
+            py: 1.4,
             borderRadius: '10px',
             fontWeight: 700,
-            fontSize: '0.92rem',
+            fontSize: '0.95rem',
             textTransform: 'none',
             background: 'linear-gradient(135deg, #2f80ed, #1e4fd8)',
             boxShadow: '0 4px 14px rgba(31,79,216,0.35)',
