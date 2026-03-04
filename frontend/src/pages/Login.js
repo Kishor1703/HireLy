@@ -1,4 +1,4 @@
-import { Box, Typography, TextField, Button,Divider } from '@mui/material';
+import { Box, Typography, TextField, Button, Divider, InputAdornment, IconButton } from '@mui/material';
 import React, { useEffect } from 'react';
 import Footer from '../components/Footer';
 import Navbar from '../components/NavBar';
@@ -12,6 +12,8 @@ import WorkIcon from '@mui/icons-material/Work';
 import BusinessCenterOutlinedIcon from '@mui/icons-material/BusinessCenterOutlined';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import AdminPanelSettingsOutlinedIcon from '@mui/icons-material/AdminPanelSettingsOutlined';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 const validationSchema = yup.object({
   email: yup.string().email('Enter a valid email').required('Email is required'),
@@ -34,6 +36,7 @@ const LogIn = ({ forcedRole }) => {
   const navigate   = useNavigate();
   const [searchParams] = useSearchParams();
   const [resendStatus, setResendStatus] = React.useState({ loading: false, message: '', error: '' });
+  const [showPassword, setShowPassword] = React.useState(false);
   const { isAuthenticated, userInfo } = useSelector((s) => s.signIn || {});
 
   const queryRole   = searchParams.get('role');
@@ -231,11 +234,25 @@ const LogIn = ({ forcedRole }) => {
                 />
 
                 <TextField
-                  fullWidth label="Password" name="password" type="password"
+                  fullWidth label="Password" name="password" type={showPassword ? 'text' : 'password'}
                   value={formik.values.password}
                   onChange={formik.handleChange} onBlur={formik.handleBlur}
                   error={formik.touched.password && Boolean(formik.errors.password)}
                   helperText={formik.touched.password && formik.errors.password}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          edge="end"
+                          onClick={() => setShowPassword((prev) => !prev)}
+                          onMouseDown={(event) => event.preventDefault()}
+                          aria-label={showPassword ? 'Hide password' : 'Show password'}
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
                   sx={{ mb: 3, '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
                 />
 

@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import {
-  Box, Button, Divider,TextField, Typography,
+  Box, Button, Divider,TextField, Typography, InputAdornment, IconButton,
 } from '@mui/material';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -11,6 +11,8 @@ import Footer from '../components/Footer';
 import WorkIcon from '@mui/icons-material/Work';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import BusinessCenterOutlinedIcon from '@mui/icons-material/BusinessCenterOutlined';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 const validationSchema = yup.object({
   firstName: yup.string().required('First name is required'),
@@ -32,6 +34,7 @@ const roleCards = [
 
 function Register() {
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = React.useState(false);
 
   const formik = useFormik({
     initialValues: { firstName: '', lastName: '', email: '', password: '', role: 0, companyName: '' },
@@ -191,11 +194,25 @@ function Register() {
                 />
 
                 <TextField
-                  fullWidth label="Password" name="password" type="password"
+                  fullWidth label="Password" name="password" type={showPassword ? 'text' : 'password'}
                   value={formik.values.password}
                   onChange={formik.handleChange} onBlur={formik.handleBlur}
                   error={formik.touched.password && Boolean(formik.errors.password)}
                   helperText={formik.touched.password && formik.errors.password}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          edge="end"
+                          onClick={() => setShowPassword((prev) => !prev)}
+                          onMouseDown={(event) => event.preventDefault()}
+                          aria-label={showPassword ? 'Hide password' : 'Show password'}
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
                   sx={{ mb: 2, '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
                 />
 
