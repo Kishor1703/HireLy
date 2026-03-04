@@ -2,6 +2,7 @@ import { Box, Typography, TextField, Button,Divider } from '@mui/material';
 import React, { useEffect } from 'react';
 import Footer from '../components/Footer';
 import Navbar from '../components/NavBar';
+import axios from 'axios';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
@@ -32,10 +33,14 @@ const LogIn = ({ forcedRole }) => {
   const dispatch   = useDispatch();
   const navigate   = useNavigate();
   const [searchParams] = useSearchParams();
+  const [resendStatus, setResendStatus] = React.useState({ loading: false, message: '', error: '' });
   const { isAuthenticated, userInfo } = useSelector((s) => s.signIn || {});
 
   const queryRole   = searchParams.get('role');
   const initialRole = forcedRole || (queryRole === 'jobPoster' ? 'jobPoster' : 'employee');
+  const verifyPending = searchParams.get('verify') === 'pending';
+  const verifiedSuccess = searchParams.get('verified') === '1';
+  const pendingEmail = (searchParams.get('email') || '').trim();
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -55,6 +60,21 @@ const LogIn = ({ forcedRole }) => {
   });
 
   const isAdmin = forcedRole === 'admin';
+
+  const resendVerification = async () => {
+    if (!pendingEmail) return;
+    try {
+      setResendStatus({ loading: true, message: '', error: '' });
+      const { data } = await axios.post('/api/resend-verification', { email: pendingEmail });
+      setResendStatus({ loading: false, message: data?.message || 'Verification email sent.', error: '' });
+    } catch (error) {
+      setResendStatus({
+        loading: false,
+        message: '',
+        error: error?.response?.data?.error || 'Unable to resend verification email.'
+      });
+    }
+  };
 
   return (
     <>
@@ -114,6 +134,42 @@ const LogIn = ({ forcedRole }) => {
               <Typography sx={{ color: '#64748b', fontSize: '0.9rem', mb: 3 }}>
                 {isAdmin ? 'Sign in to your admin account' : 'Sign in to continue to your account'}
               </Typography>
+
+              {!isAdmin && verifyPending && (
+                <Box sx={{ bgcolor: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '10px', px: 2, py: 1.5, mb: 2.5 }}>
+                  <Typography sx={{ color: '#1e40af', fontSize: '0.88rem' }}>
+                    Verification email sent to {pendingEmail || 'your inbox'}. Please verify before logging in.
+                  </Typography>
+                  {pendingEmail && (
+                    <Button
+                      onClick={resendVerification}
+                      size="small"
+                      disabled={resendStatus.loading}
+                      sx={{ mt: 1, px: 0, minWidth: 0, textTransform: 'none', fontWeight: 700 }}
+                    >
+                      {resendStatus.loading ? 'Sending...' : 'Resend verification email'}
+                    </Button>
+                  )}
+                  {resendStatus.message && (
+                    <Typography sx={{ color: '#166534', fontSize: '0.82rem', mt: 0.8 }}>
+                      {resendStatus.message}
+                    </Typography>
+                  )}
+                  {resendStatus.error && (
+                    <Typography sx={{ color: '#b91c1c', fontSize: '0.82rem', mt: 0.8 }}>
+                      {resendStatus.error}
+                    </Typography>
+                  )}
+                </Box>
+              )}
+
+              {!isAdmin && verifiedSuccess && (
+                <Box sx={{ bgcolor: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '10px', px: 2, py: 1.5, mb: 2.5 }}>
+                  <Typography sx={{ color: '#166534', fontSize: '0.88rem' }}>
+                    Email verified successfully. You can sign in now.
+                  </Typography>
+                </Box>
+              )}
 
               {/* Role selector (non-admin) */}
               {!isAdmin && (

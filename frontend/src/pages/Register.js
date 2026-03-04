@@ -47,7 +47,8 @@ function Register() {
             await axios.post('/api/users/register', payload);
           } else throw err;
         }
-        navigate(Number(values.role) === 2 ? '/login?role=jobPoster' : '/login?role=employee');
+        const loginRole = Number(values.role) === 2 ? 'jobPoster' : 'employee';
+        navigate(`/login?role=${loginRole}&verify=pending&email=${encodeURIComponent(values.email)}`);
       } catch (err) {
         actions.setStatus(
           err?.response?.data?.error ||

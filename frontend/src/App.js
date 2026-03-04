@@ -9,6 +9,7 @@ import {ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import LogIn from './pages/Login';
 import Register from './pages/Register';
+import VerifyEmail from './pages/VerifyEmail';
 import UserDashboard from './pages/user/UserDashboard';
 import UserJobsHistory from './pages/user/UserJobsHistory';
 import EmployeeApplyJobs from './pages/user/EmployeeApplyJobs';
@@ -55,6 +56,7 @@ const App = () => {
             <Route path='/login' element={<LogIn />} />
             <Route path='/admin/login' element={<LogIn forcedRole="admin" />} />
             <Route path='/register' element={<Register />} />
+            <Route path='/verify-email' element={<VerifyEmail />} />
             <Route path='/user/dashboard' element={<UserRoute allowedRoles={[0]}><UserDashboardHOC /></UserRoute>} />
             <Route path='/user/apply-jobs' element={<UserRoute allowedRoles={[0]}><EmployeeApplyJobsHOC /></UserRoute>} />
             <Route path='/poster/dashboard' element={<UserRoute allowedRoles={[2]}><JobPosterDashboardHOC /></UserRoute>} />
