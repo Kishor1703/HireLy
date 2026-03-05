@@ -9,6 +9,7 @@ import {
   Chip,
   CircularProgress,
   Grid,
+  Pagination,
   Stack,
   Table,
   TableBody,
@@ -36,21 +37,31 @@ const AdminDashboard = () => {
   const [companies, setCompanies] = useState([]);
   const [keyword, setKeyword] = useState('');
   const [loading, setLoading] = useState(true);
+  const [employeePage, setEmployeePage] = useState(1);
+  const [companyPage, setCompanyPage] = useState(1);
+  const [employeePages, setEmployeePages] = useState(1);
+  const [companyPages, setCompanyPages] = useState(1);
+  const [employeeCount, setEmployeeCount] = useState(0);
+  const [companyCount, setCompanyCount] = useState(0);
   const [deletingId, setDeletingId] = useState('');
   const [updatingApprovalId, setUpdatingApprovalId] = useState('');
   const [updatingVerificationId, setUpdatingVerificationId] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
-  const fetchDashboard = async (search = '') => {
+  const fetchDashboard = async (search = '', employeePageNumber = 1, companyPageNumber = 1) => {
     setLoading(true);
     setError('');
     try {
       const params = search ? { keyword: search } : {};
       const [statsRes, employeeRes, companyRes] = await Promise.all([
         axios.get('/api/admin/stats'),
-        axios.get('/api/admin/users', { params: { ...params, role: 0, pageSize: 100 } }),
-        axios.get('/api/admin/users', { params: { ...params, role: 2, pageSize: 100 } }),
+        axios.get('/api/admin/users', {
+          params: { ...params, role: 0, pageSize: 10, pageNumber: employeePageNumber },
+        }),
+        axios.get('/api/admin/users', {
+          params: { ...params, role: 2, pageSize: 10, pageNumber: companyPageNumber },
+        }),
       ]);
 
       setStats({
@@ -66,6 +77,12 @@ const AdminDashboard = () => {
       });
       setEmployees(employeeRes?.data?.users || []);
       setCompanies(companyRes?.data?.users || []);
+      setEmployeePages(Math.max(1, Number(employeeRes?.data?.pages) || 1));
+      setCompanyPages(Math.max(1, Number(companyRes?.data?.pages) || 1));
+      setEmployeeCount(Number(employeeRes?.data?.count) || 0);
+      setCompanyCount(Number(companyRes?.data?.count) || 0);
+      setEmployeePage(Math.max(1, Number(employeeRes?.data?.page) || employeePageNumber));
+      setCompanyPage(Math.max(1, Number(companyRes?.data?.page) || companyPageNumber));
     } catch (err) {
       setError(err?.response?.data?.error || 'Failed to load admin dashboard data');
     } finally {
@@ -79,7 +96,7 @@ const AdminDashboard = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    fetchDashboard(keyword.trim());
+    fetchDashboard(keyword.trim(), 1, 1);
   };
 
   const handleDeleteUser = async (user, userTypeLabel) => {
@@ -103,7 +120,7 @@ const AdminDashboard = () => {
         : '';
 
       setMessage(`${userTypeLabel} account deleted.${cleanupNote}`);
-      fetchDashboard(keyword.trim());
+      fetchDashboard(keyword.trim(), employeePage, companyPage);
     } catch (err) {
       setError(err?.response?.data?.error || err?.response?.data?.message || `Failed to delete ${userTypeLabel.toLowerCase()}`);
     } finally {
@@ -128,7 +145,7 @@ const AdminDashboard = () => {
     try {
       await axios.patch(`/api/admin/company/${userId}/approval`, { status });
       setMessage(`Company marked as ${status}.`);
-      fetchDashboard(keyword.trim());
+      fetchDashboard(keyword.trim(), employeePage, companyPage);
     } catch (err) {
       setError(err?.response?.data?.error || err?.response?.data?.message || 'Failed to update company approval status');
     } finally {
@@ -154,7 +171,7 @@ const AdminDashboard = () => {
     try {
       await axios.patch(`/api/admin/company/${userId}/verification`, { verified });
       setMessage(verified ? 'Company marked as verified.' : 'Company verification removed.');
-      fetchDashboard(keyword.trim());
+      fetchDashboard(keyword.trim(), employeePage, companyPage);
     } catch (err) {
       setError(err?.response?.data?.error || err?.response?.data?.message || 'Failed to update company verification');
     } finally {
@@ -216,7 +233,7 @@ const AdminDashboard = () => {
             <CardContent>
               <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.5 }}>
                 <Typography variant="h6" sx={{ fontWeight: 700 }}>Manage Employees</Typography>
-                <Chip label={`${employees.length} found`} size="small" />
+                <Chip label={`${employeeCount} found`} size="small" />
               </Stack>
               <TableContainer>
                 <Table size="small">
@@ -254,6 +271,16 @@ const AdminDashboard = () => {
                   </TableBody>
                 </Table>
               </TableContainer>
+              {employeePages > 1 && (
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1.5 }}>
+                  <Pagination
+                    page={employeePage}
+                    count={employeePages}
+                    onChange={(event, value) => fetchDashboard(keyword.trim(), value, companyPage)}
+                    size="small"
+                  />
+                </Box>
+              )}
             </CardContent>
           </Card>
 
@@ -261,7 +288,7 @@ const AdminDashboard = () => {
             <CardContent>
               <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.5 }}>
                 <Typography variant="h6" sx={{ fontWeight: 700 }}>Manage Companies</Typography>
-                <Chip label={`${companies.length} found`} size="small" />
+                <Chip label={`${companyCount} found`} size="small" />
               </Stack>
               <TableContainer>
                 <Table size="small">
@@ -343,6 +370,16 @@ const AdminDashboard = () => {
                   </TableBody>
                 </Table>
               </TableContainer>
+              {companyPages > 1 && (
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1.5 }}>
+                  <Pagination
+                    page={companyPage}
+                    count={companyPages}
+                    onChange={(event, value) => fetchDashboard(keyword.trim(), employeePage, value)}
+                    size="small"
+                  />
+                </Box>
+              )}
             </CardContent>
           </Card>
         </Stack>
