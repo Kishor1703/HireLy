@@ -39,7 +39,7 @@ const Navbar = () => {
     if (!userInfo) return '/';
     if (userInfo.role === 1) return '/';
     if (userInfo.role === 2) return '/';
-    return '/user/info';
+    return '/';
   };
 
   const getDisplayName = () => {
