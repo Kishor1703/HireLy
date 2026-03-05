@@ -5,6 +5,7 @@ import {
   Avatar,
   Box,
   Button,
+  Chip,
   CircularProgress,
   Divider,
   Stack,
@@ -40,6 +41,8 @@ const PosterApplications = () => {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [updatingStatusId, setUpdatingStatusId] = useState('');
 
   useEffect(() => {
     const fetchApplications = async () => {
@@ -65,6 +68,39 @@ const PosterApplications = () => {
     };
     fetchApplications();
   }, []);
+
+  const updateApplicationStatus = async (applicationId, status) => {
+    setUpdatingStatusId(applicationId);
+    setError('');
+    setSuccess('');
+
+    try {
+      const { data } = await axios.patch(`/api/applications/${applicationId}/status`, { status });
+      setApplications((prev) => prev.map((application) => (
+        application._id === applicationId
+          ? { ...application, status: data?.application?.status || status }
+          : application
+      )));
+      setSuccess(data?.message || `Application marked as ${status}.`);
+    } catch (err) {
+      const statusCode = err?.response?.status;
+      const message = err?.response?.data?.error || err?.response?.data?.message;
+      setError(message || (statusCode ? `Failed to update status (HTTP ${statusCode})` : 'Failed to update status'));
+    } finally {
+      setUpdatingStatusId('');
+    }
+  };
+
+  const renderStatusChip = (status) => {
+    const normalized = (status || 'pending').toLowerCase();
+    if (normalized === 'shortlisted') {
+      return <Chip label="Shortlisted" size="small" color="success" />;
+    }
+    if (normalized === 'rejected') {
+      return <Chip label="Rejected" size="small" color="error" />;
+    }
+    return <Chip label="Pending" size="small" color="warning" />;
+  };
 
   const grouped = useMemo(() => {
     const map = new Map();
@@ -117,7 +153,8 @@ const PosterApplications = () => {
         </Box>
       )}
 
-      {!loading && error && <Alert severity="error">{error}</Alert>}
+      {!loading && success && <Alert severity="success" sx={{ mb: 1.5 }}>{success}</Alert>}
+      {!loading && error && <Alert severity="error" sx={{ mb: 1.5 }}>{error}</Alert>}
 
       {!loading && !error && grouped.length === 0 && (
         <Box sx={{
@@ -206,9 +243,12 @@ const PosterApplications = () => {
                       ? `${app.firstName || ''} ${app.lastName || ''}`.trim()
                       : 'Applicant'}
                   </Typography>
-                  <Typography sx={{ fontSize: '0.75rem', color: '#64748b' }}>
-                    Applied on {app.createdAt ? new Date(app.createdAt).toLocaleDateString() : 'N/A'}
-                  </Typography>
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    {renderStatusChip(app.status)}
+                    <Typography sx={{ fontSize: '0.75rem', color: '#64748b' }}>
+                      Applied on {app.createdAt ? new Date(app.createdAt).toLocaleDateString() : 'N/A'}
+                    </Typography>
+                  </Stack>
                 </Box>
 
                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.4} sx={{ mt: 0.8, mb: 1 }}>
@@ -222,28 +262,60 @@ const PosterApplications = () => {
                   </Typography>
                 </Stack>
 
-                <Button
-                  component="a"
-                  href={app.resume}
-                  target="_blank"
-                  rel="noreferrer"
-                  download={String(app.resume || '').startsWith('data:') ? `${(app.firstName || 'candidate').toLowerCase()}-resume` : undefined}
-                  variant="outlined"
-                  size="small"
-                  startIcon={<DescriptionOutlinedIcon sx={{ fontSize: '15px !important' }} />}
-                  endIcon={<OpenInNewOutlinedIcon sx={{ fontSize: '14px !important' }} />}
-                  disabled={!app.resume}
-                  sx={{
-                    textTransform: 'none',
-                    borderRadius: '9px',
-                    fontWeight: 600,
-                    borderColor: '#bfdbfe',
-                    color: '#1e4fd8',
-                    '&:hover': { bgcolor: '#eff6ff', borderColor: '#2f80ed' },
-                  }}
-                >
-                  {getResumeTypeLabel(app.resume)}
-                </Button>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} useFlexGap>
+                  <Button
+                    component="a"
+                    href={app.resume}
+                    target="_blank"
+                    rel="noreferrer"
+                    download={String(app.resume || '').startsWith('data:') ? `${(app.firstName || 'candidate').toLowerCase()}-resume` : undefined}
+                    variant="outlined"
+                    size="small"
+                    startIcon={<DescriptionOutlinedIcon sx={{ fontSize: '15px !important' }} />}
+                    endIcon={<OpenInNewOutlinedIcon sx={{ fontSize: '14px !important' }} />}
+                    disabled={!app.resume}
+                    sx={{
+                      textTransform: 'none',
+                      borderRadius: '9px',
+                      fontWeight: 600,
+                      borderColor: '#bfdbfe',
+                      color: '#1e4fd8',
+                      '&:hover': { bgcolor: '#eff6ff', borderColor: '#2f80ed' },
+                    }}
+                  >
+                    {getResumeTypeLabel(app.resume)}
+                  </Button>
+
+                  <Button
+                    size="small"
+                    variant={app.status === 'pending' || !app.status ? 'contained' : 'outlined'}
+                    onClick={() => updateApplicationStatus(app._id, 'pending')}
+                    disabled={updatingStatusId === app._id}
+                    sx={{ textTransform: 'none', borderRadius: '9px', fontWeight: 600 }}
+                  >
+                    Pending
+                  </Button>
+                  <Button
+                    size="small"
+                    color="success"
+                    variant={app.status === 'shortlisted' ? 'contained' : 'outlined'}
+                    onClick={() => updateApplicationStatus(app._id, 'shortlisted')}
+                    disabled={updatingStatusId === app._id}
+                    sx={{ textTransform: 'none', borderRadius: '9px', fontWeight: 600 }}
+                  >
+                    Shortlist
+                  </Button>
+                  <Button
+                    size="small"
+                    color="error"
+                    variant={app.status === 'rejected' ? 'contained' : 'outlined'}
+                    onClick={() => updateApplicationStatus(app._id, 'rejected')}
+                    disabled={updatingStatusId === app._id}
+                    sx={{ textTransform: 'none', borderRadius: '9px', fontWeight: 600 }}
+                  >
+                    Reject
+                  </Button>
+                </Stack>
               </Box>
             ))}
           </Stack>

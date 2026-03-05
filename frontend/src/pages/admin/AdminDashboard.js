@@ -27,6 +27,8 @@ const AdminDashboard = () => {
     pendingCompanies: 0,
     approvedCompanies: 0,
     rejectedCompanies: 0,
+    verifiedCompanies: 0,
+    unverifiedCompanies: 0,
     jobs: 0,
     applications: 0,
   });
@@ -36,6 +38,7 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState('');
   const [updatingApprovalId, setUpdatingApprovalId] = useState('');
+  const [updatingVerificationId, setUpdatingVerificationId] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
@@ -56,6 +59,8 @@ const AdminDashboard = () => {
         pendingCompanies: statsRes?.data?.stats?.pendingCompanies || 0,
         approvedCompanies: statsRes?.data?.stats?.approvedCompanies || 0,
         rejectedCompanies: statsRes?.data?.stats?.rejectedCompanies || 0,
+        verifiedCompanies: statsRes?.data?.stats?.verifiedCompanies || 0,
+        unverifiedCompanies: statsRes?.data?.stats?.unverifiedCompanies || 0,
         jobs: statsRes?.data?.stats?.jobs || 0,
         applications: statsRes?.data?.stats?.applications || 0,
       });
@@ -111,6 +116,7 @@ const AdminDashboard = () => {
     { label: 'Companies', value: stats.companies },
     { label: 'Pending Companies', value: stats.pendingCompanies },
     { label: 'Approved Companies', value: stats.approvedCompanies },
+    { label: 'Verified Companies', value: stats.verifiedCompanies },
     { label: 'Total Jobs', value: stats.jobs },
     { label: 'Applications', value: stats.applications },
   ]), [stats]);
@@ -139,6 +145,21 @@ const AdminDashboard = () => {
       return <Chip label="Rejected" size="small" color="error" />;
     }
     return <Chip label="Pending" size="small" color="warning" />;
+  };
+
+  const updateCompanyVerification = async (userId, verified) => {
+    setUpdatingVerificationId(userId);
+    setError('');
+    setMessage('');
+    try {
+      await axios.patch(`/api/admin/company/${userId}/verification`, { verified });
+      setMessage(verified ? 'Company marked as verified.' : 'Company verification removed.');
+      fetchDashboard(keyword.trim());
+    } catch (err) {
+      setError(err?.response?.data?.error || err?.response?.data?.message || 'Failed to update company verification');
+    } finally {
+      setUpdatingVerificationId('');
+    }
   };
 
   return (
@@ -250,6 +271,7 @@ const AdminDashboard = () => {
                       <TableCell>Email</TableCell>
                       <TableCell>Company</TableCell>
                       <TableCell>Status</TableCell>
+                      <TableCell>Verification</TableCell>
                       <TableCell>Joined</TableCell>
                       <TableCell align="right">Action</TableCell>
                     </TableRow>
@@ -263,6 +285,12 @@ const AdminDashboard = () => {
                           <TableCell>{user.email}</TableCell>
                           <TableCell>{user.companyName || '-'}</TableCell>
                           <TableCell>{getStatusChip(companyStatus)}</TableCell>
+                          <TableCell>
+                            {user.companyVerified
+                              ? <Chip label="Verified" size="small" color="success" />
+                              : <Chip label="Unverified" size="small" variant="outlined" />
+                            }
+                          </TableCell>
                           <TableCell>{new Date(user.createdAt).toLocaleDateString()}</TableCell>
                           <TableCell align="right">
                             {companyStatus !== 'approved' && (
@@ -286,10 +314,20 @@ const AdminDashboard = () => {
                               </Button>
                             )}
                             <Button
+                              color={user.companyVerified ? 'secondary' : 'info'}
+                              size="small"
+                              onClick={() => updateCompanyVerification(user._id, !user.companyVerified)}
+                              disabled={updatingVerificationId === user._id || deletingId === user._id}
+                            >
+                              {updatingVerificationId === user._id
+                                ? 'Updating...'
+                                : (user.companyVerified ? 'Unverify' : 'Verify')}
+                            </Button>
+                            <Button
                               color="error"
                               size="small"
                               onClick={() => handleDeleteUser(user, 'Company')}
-                              disabled={deletingId === user._id || updatingApprovalId === user._id}
+                              disabled={deletingId === user._id || updatingApprovalId === user._id || updatingVerificationId === user._id}
                             >
                               {deletingId === user._id ? 'Deleting...' : 'Delete Company'}
                             </Button>
@@ -299,7 +337,7 @@ const AdminDashboard = () => {
                     })}
                     {companies.length === 0 && (
                       <TableRow>
-                        <TableCell colSpan={6} align="center">No companies found</TableCell>
+                        <TableCell colSpan={7} align="center">No companies found</TableCell>
                       </TableRow>
                     )}
                   </TableBody>

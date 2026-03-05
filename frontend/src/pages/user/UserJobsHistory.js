@@ -81,6 +81,7 @@ const UserJobsHistory = () => {
                     location: application.job?.location,
                     companyName: application.job?.companyName,
                     companyLogo: application.job?.companyLogo,
+                    status: application.status || 'pending',
                 }));
         }
 
@@ -92,8 +93,20 @@ const UserJobsHistory = () => {
             location: history.location,
             companyName: history.companyName || resolvedHistoryJobs[history._id || `${history.title}-${history.location || ''}`]?.companyName,
             companyLogo: history.companyLogo || resolvedHistoryJobs[history._id || `${history.title}-${history.location || ''}`]?.companyLogo,
+            status: history.applicationStatus || 'pending',
         }));
     }, [applications, resolvedHistoryJobs, user]);
+
+    const renderStatusChip = (status) => {
+        const normalized = String(status || 'pending').toLowerCase();
+        if (normalized === 'shortlisted') {
+            return <Chip label="Shortlisted" size="small" color="success" />;
+        }
+        if (normalized === 'rejected') {
+            return <Chip label="Rejected" size="small" color="error" />;
+        }
+        return <Chip label="Pending" size="small" color="warning" />;
+    };
 
     return (
         <Box>
@@ -170,16 +183,20 @@ const UserJobsHistory = () => {
             {/* Job cards */}
             <Box>
                 {jobs.map((job) => (
-                    <CardElement
-                        key={job.key}
-                        id={job.id}
-                        jobTitle={job.title}
-                        description={job.description}
-                        category=""
-                        location={job.location}
-                        companyName={job.companyName}
-                        companyLogo={job.companyLogo}
-                    />
+                    <Box key={job.key} sx={{ position: 'relative' }}>
+                        <Box sx={{ position: 'absolute', right: 12, top: 12, zIndex: 2 }}>
+                            {renderStatusChip(job.status)}
+                        </Box>
+                        <CardElement
+                            id={job.id}
+                            jobTitle={job.title}
+                            description={job.description}
+                            category=""
+                            location={job.location}
+                            companyName={job.companyName}
+                            companyLogo={job.companyLogo}
+                        />
+                    </Box>
                 ))}
             </Box>
         </Box>

@@ -25,6 +25,7 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import BadgeOutlinedIcon from '@mui/icons-material/BadgeOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
+import VerifiedOutlinedIcon from '@mui/icons-material/VerifiedOutlined';
 
 // ── Reusable field label ──────────────────────────────────
 const FieldLabel = ({ children, required }) => (
@@ -454,13 +455,29 @@ const JobDetails = () => {
                       ? <Box component="img" src={job.companyLogo || job?.user?.companyLogo} alt={job.companyName} sx={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       : <BusinessOutlinedIcon sx={{ color: '#1e4fd8', fontSize: 28 }} />}
                   </Box>
-                  <Box sx={{ flex: 1 }}>
-                    <Typography sx={{ fontWeight: 800, fontSize: { xs: '1.4rem', md: '1.8rem' }, color: '#0a2463', lineHeight: 1.2, mb: 0.5 }}>
-                      {job.title}
-                    </Typography>
-                    <Typography sx={{ fontWeight: 600, color: '#1e4fd8', fontSize: '1rem' }}>
-                      {job.companyName || job?.user?.companyName || 'Company not specified'}
-                    </Typography>
+                    <Box sx={{ flex: 1 }}>
+                      <Typography sx={{ fontWeight: 800, fontSize: { xs: '1.4rem', md: '1.8rem' }, color: '#0a2463', lineHeight: 1.2, mb: 0.5 }}>
+                        {job.title}
+                      </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                      <Typography sx={{ fontWeight: 600, color: '#1e4fd8', fontSize: '1rem' }}>
+                        {job.companyName || job?.user?.companyName || 'Company not specified'}
+                      </Typography>
+                      {job?.user?.companyVerified && (
+                        <Chip
+                          size="small"
+                          icon={<VerifiedOutlinedIcon sx={{ fontSize: '16px !important' }} />}
+                          label="Verified Company"
+                          sx={{
+                            height: 24,
+                            fontWeight: 700,
+                            bgcolor: '#f0fdf4',
+                            color: '#166534',
+                            border: '1px solid #bbf7d0',
+                          }}
+                        />
+                      )}
+                    </Box>
                   </Box>
                   <Chip label="Hiring" size="small" sx={{ bgcolor: '#dcfce7', color: '#16a34a', fontWeight: 700, fontSize: '0.72rem', border: '1px solid #bbf7d0', borderRadius: '8px', flexShrink: 0 }} />
                 </Box>

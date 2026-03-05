@@ -3,9 +3,10 @@ import { Box, Button, Chip, Typography } from '@mui/material';
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
 import OpenInNewOutlinedIcon from '@mui/icons-material/OpenInNewOutlined';
+import VerifiedOutlinedIcon from '@mui/icons-material/VerifiedOutlined';
 import { Link } from 'react-router-dom';
 
-const CardElement = ({ jobTitle, description, category, location, companyName, companyLogo, id }) => {
+const CardElement = ({ jobTitle, description, category, location, companyName, companyLogo, companyVerified, id }) => {
   const shortDesc = description && typeof description === 'string'
     ? description.split(' ').slice(0, 20).join(' ') + '...'
     : 'No description available';
@@ -43,9 +44,27 @@ const CardElement = ({ jobTitle, description, category, location, companyName, c
 
         {/* Company + location */}
         <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Typography sx={{ fontWeight: 600, fontSize: '0.82rem', color: '#1e4fd8', lineHeight: 1.2 }}>
-            {companyName || 'Company not specified'}
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8, flexWrap: 'wrap' }}>
+            <Typography sx={{ fontWeight: 600, fontSize: '0.82rem', color: '#1e4fd8', lineHeight: 1.2 }}>
+              {companyName || 'Company not specified'}
+            </Typography>
+            {companyVerified && (
+              <Chip
+                size="small"
+                icon={<VerifiedOutlinedIcon sx={{ fontSize: '14px !important' }} />}
+                label="Verified"
+                sx={{
+                  height: 20,
+                  fontSize: '0.66rem',
+                  fontWeight: 700,
+                  bgcolor: '#f0fdf4',
+                  color: '#166534',
+                  border: '1px solid #bbf7d0',
+                  '& .MuiChip-label': { px: 0.8 },
+                }}
+              />
+            )}
+          </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.3, mt: 0.2 }}>
             <LocationOnOutlinedIcon sx={{ fontSize: 13, color: '#94a3b8' }} />
             <Typography sx={{ fontSize: '0.75rem', color: '#94a3b8' }}>

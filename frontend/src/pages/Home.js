@@ -104,6 +104,7 @@ const Home = () => {
                                                 description={job.description}
                                                 companyName={job.companyName}
                                                 companyLogo={job.companyLogo}
+                                                companyVerified={Boolean(job?.user?.companyVerified)}
                                                 category={job.jobType ? job.jobType.jobTypeName : "No category"}
                                                 location={job.location}
                                             />
