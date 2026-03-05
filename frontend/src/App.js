@@ -10,6 +10,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import LogIn from './pages/Login';
 import Register from './pages/Register';
 import VerifyEmail from './pages/VerifyEmail';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import UserDashboard from './pages/user/UserDashboard';
 import UserJobsHistory from './pages/user/UserJobsHistory';
 import EmployeeApplyJobs from './pages/user/EmployeeApplyJobs';
@@ -46,7 +48,12 @@ const App = () => {
       <ToastContainer/>
       <ThemeProvider theme={theme}>
         <CssBaseline/>
-        <BrowserRouter>
+        <BrowserRouter
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true,
+          }}
+        >
           <Routes>
             <Route path='/' element={<CommonHome />} />
             <Route path='/jobs' element={<Home />} />
@@ -57,6 +64,8 @@ const App = () => {
             <Route path='/admin/login' element={<LogIn forcedRole="admin" />} />
             <Route path='/register' element={<Register />} />
             <Route path='/verify-email' element={<VerifyEmail />} />
+            <Route path='/forgot-password' element={<ForgotPassword />} />
+            <Route path='/reset-password' element={<ResetPassword />} />
             <Route path='/user/dashboard' element={<UserRoute allowedRoles={[0]}><UserDashboardHOC /></UserRoute>} />
             <Route path='/user/apply-jobs' element={<UserRoute allowedRoles={[0]}><EmployeeApplyJobsHOC /></UserRoute>} />
             <Route path='/poster/dashboard' element={<UserRoute allowedRoles={[2]}><JobPosterDashboardHOC /></UserRoute>} />

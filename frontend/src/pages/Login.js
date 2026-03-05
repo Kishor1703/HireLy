@@ -256,6 +256,24 @@ const LogIn = ({ forcedRole }) => {
                   sx={{ mb: 3, '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
                 />
 
+                {!isAdmin && (
+                  <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2.2 }}>
+                    <Typography
+                      component={Link}
+                      to="/forgot-password"
+                      sx={{
+                        fontSize: '0.85rem',
+                        color: '#1e4fd8',
+                        textDecoration: 'none',
+                        fontWeight: 600,
+                        '&:hover': { textDecoration: 'underline' },
+                      }}
+                    >
+                      Forgot password?
+                    </Typography>
+                  </Box>
+                )}
+
                 <Button
                   fullWidth type="submit" variant="contained"
                   sx={{
