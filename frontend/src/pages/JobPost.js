@@ -6,29 +6,34 @@ function JobPost() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [salary, setSalary] = useState('');
-  const [location, setLocation] = useState('');
+  const [locations, setLocations] = useState([]);
   const [jobType, setJobType] = useState('');
   const [categories, setCategories] = useState([]);
+  const [locationOptions, setLocationOptions] = useState([]);
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
-    const loadCategories = async () => {
+    const loadReferenceData = async () => {
       try {
-        const { data } = await axios.get('/api/type/jobs');
-        setCategories(data?.jobT || []);
+        const [{ data: categoryData }, { data: locationData }] = await Promise.all([
+          axios.get('/api/type/jobs'),
+          axios.get('/api/location/jobs'),
+        ]);
+        setCategories(categoryData?.jobT || []);
+        setLocationOptions(locationData?.jobLocations || []);
       } catch (err) {
-        setError('Failed to load categories');
+        setError('Failed to load categories and locations');
       }
     };
-    loadCategories();
+    loadReferenceData();
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     try {
-      await axios.post('/api/job/create', { title, description, salary, location, jobType });
+      await axios.post('/api/job/create', { title, description, salary, locations, jobType });
       navigate('/');
     } catch (err) {
       setError(err?.response?.data?.error || err?.response?.data?.message || 'Failed to post job');
@@ -60,13 +65,18 @@ function JobPost() {
           onChange={(e) => setSalary(e.target.value)}
           required
         />
-        <input
-          type="text"
-          placeholder="Location"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
+        <select
+          multiple
+          value={locations}
+          onChange={(e) => setLocations(Array.from(e.target.selectedOptions, (option) => option.value))}
           required
-        />
+        >
+          {locationOptions.map((location) => (
+            <option key={location._id} value={location._id}>
+              {location.locationName}
+            </option>
+          ))}
+        </select>
         <select
           value={jobType}
           onChange={(e) => setJobType(e.target.value)}

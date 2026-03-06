@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import {
-  Box, Button, MenuItem, Stack, TextField, Typography,
+  Box, Button, Checkbox, ListItemText, MenuItem, Stack, TextField, Typography,
   Divider, CircularProgress, Grid, Chip,
 } from '@mui/material';
 import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
@@ -39,9 +39,10 @@ const JobPosterDashboard = () => {
   const [title,       setTitle]       = useState('');
   const [description, setDescription] = useState('');
   const [salary,      setSalary]      = useState('');
-  const [location,    setLocation]    = useState('');
+  const [locations,   setLocations]   = useState([]);
   const [jobType,     setJobType]     = useState('');
   const [jobTypes,    setJobTypes]    = useState([]);
+  const [locationOptions, setLocationOptions] = useState([]);
   const [message,     setMessage]     = useState('');
   const [error,       setError]       = useState('');
   const [loading,     setLoading]     = useState(false);
@@ -50,9 +51,15 @@ const JobPosterDashboard = () => {
   const [companyApprovalStatus, setCompanyApprovalStatus] = useState('approved');
 
   useEffect(() => {
-    axios.get('/api/type/jobs')
-      .then(({ data }) => setJobTypes(data?.jobT || []))
-      .catch((err) => setError(err?.response?.data?.error || 'Failed to load categories'));
+    Promise.all([
+      axios.get('/api/type/jobs'),
+      axios.get('/api/location/jobs'),
+    ])
+      .then(([{ data: typeData }, { data: locationData }]) => {
+        setJobTypes(typeData?.jobT || []);
+        setLocationOptions(locationData?.jobLocations || []);
+      })
+      .catch((err) => setError(err?.response?.data?.error || 'Failed to load categories and locations'));
   }, []);
 
   useEffect(() => {
@@ -74,10 +81,10 @@ const JobPosterDashboard = () => {
     setMessage(''); setError(''); setLoading(true);
     try {
       await axios.post('/api/job/create', {
-        title, description, salary, location, jobType, companyName, companyLogo,
+        title, description, salary, locations, jobType, companyName, companyLogo,
       });
       setMessage('Job posted successfully!');
-      setTitle(''); setDescription(''); setSalary(''); setLocation(''); setJobType('');
+      setTitle(''); setDescription(''); setSalary(''); setLocations([]); setJobType('');
     } catch (err) {
       setError(err?.response?.data?.error || err?.response?.data?.message || 'Job posting failed');
     } finally {
@@ -255,10 +262,37 @@ const JobPosterDashboard = () => {
             <Grid item xs={12} sm={6}>
               <FieldLabel icon={<LocationOnOutlinedIcon />} required>Location</FieldLabel>
               <TextField
-                value={location} onChange={(e) => setLocation(e.target.value)}
-                required fullWidth placeholder="e.g. New York, NY or Remote"
+                select
+                value={locations}
+                onChange={(e) => setLocations(e.target.value)}
+                required
+                fullWidth
                 sx={fieldSx}
-              />
+                SelectProps={{
+                  multiple: true,
+                  displayEmpty: true,
+                  renderValue: (selected) => {
+                    if (!selected.length) {
+                      return <Typography sx={{ color: '#94a3b8', fontSize: '0.9rem' }}>Select one or more locations</Typography>;
+                    }
+
+                    return locationOptions
+                      .filter((option) => selected.includes(option._id))
+                      .map((option) => option.locationName)
+                      .join(', ');
+                  },
+                }}
+              >
+                <MenuItem value="" disabled>
+                  <Typography sx={{ color: '#94a3b8', fontSize: '0.9rem' }}>Select one or more locations</Typography>
+                </MenuItem>
+                {locationOptions.map((option) => (
+                  <MenuItem key={option._id} value={option._id}>
+                    <Checkbox checked={locations.includes(option._id)} size="small" />
+                    <ListItemText primary={option.locationName} />
+                  </MenuItem>
+                ))}
+              </TextField>
             </Grid>
           </Grid>
 

@@ -21,6 +21,7 @@ import userInfoDashboard from './pages/user/UserInfoDasboard';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import JobPosterDashboard from './pages/poster/JobPosterDashboard';
 import AdminCategory from './pages/admin/AdminCategory';
+import AdminLocation from './pages/admin/AdminLocation';
 import JobDetails from './pages/JobDetails';
 import CompanyProfile from './pages/poster/CompanyProfile';
 import PosterApplications from './pages/poster/PosterApplications';
@@ -36,6 +37,7 @@ const UserInfoDasboardHOC = Layout(userInfoDashboard);
 const AdminDashboardHOC = Layout(AdminDashboard);
 const JobPosterDashboardHOC = Layout(JobPosterDashboard);
 const AdminCategoryHOC = Layout(AdminCategory);
+const AdminLocationHOC = Layout(AdminLocation);
 const CompanyProfileHOC = Layout(CompanyProfile);
 const PosterApplicationsHOC = Layout(PosterApplications);
 const ManageJobsHOC = Layout(ManageJobs);
@@ -84,6 +86,7 @@ const App = () => {
             <Route path='/admin/companies' element={<UserRoute allowedRoles={[1]}><AdminDashboardHOC /></UserRoute>} />
             <Route path='/admin/jobs' element={<UserRoute allowedRoles={[1]}><AdminDashboardHOC /></UserRoute>} />
             <Route path='/admin/category' element={<UserRoute allowedRoles={[1]}><AdminCategoryHOC /></UserRoute>} />
+            <Route path='/admin/location' element={<UserRoute allowedRoles={[1]}><AdminLocationHOC /></UserRoute>} />
             <Route path='/user/jobs' element={<UserRoute allowedRoles={[0]}><UserJobsHistoryHOC /></UserRoute>} />
             <Route path='/user/info' element={<UserRoute allowedRoles={[0]}><UserInfoDasboardHOC /></UserRoute>} />
             <Route path='*' element={withPageTransition(<NotFound />)} />

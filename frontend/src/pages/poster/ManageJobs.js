@@ -4,12 +4,14 @@ import {
   Alert,
   Box,
   Button,
+  Checkbox,
   CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   Divider,
+  ListItemText,
   MenuItem,
   Stack,
   TextField,
@@ -36,6 +38,7 @@ const fieldSx = {
 const ManageJobs = () => {
   const [jobs, setJobs] = useState([]);
   const [jobTypes, setJobTypes] = useState([]);
+  const [locationOptions, setLocationOptions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -46,7 +49,7 @@ const ManageJobs = () => {
     title: '',
     description: '',
     salary: '',
-    location: '',
+    locations: [],
     jobType: '',
   });
 
@@ -56,12 +59,14 @@ const ManageJobs = () => {
     setLoading(true);
     setError('');
     try {
-      const [{ data: jobsData }, { data: typeData }] = await Promise.all([
+      const [{ data: jobsData }, { data: typeData }, { data: locationData }] = await Promise.all([
         axios.get('/api/poster/jobs'),
         axios.get('/api/type/jobs'),
+        axios.get('/api/location/jobs'),
       ]);
       setJobs(jobsData?.jobs || []);
       setJobTypes(typeData?.jobT || []);
+      setLocationOptions(locationData?.jobLocations || []);
     } catch (err) {
       setError(err?.response?.data?.error || err?.response?.data?.message || 'Failed to load posted jobs');
     } finally {
@@ -73,6 +78,25 @@ const ManageJobs = () => {
     loadData();
   }, []);
 
+  const getSelectedLocationIds = (job) => {
+    const populatedIds = Array.isArray(job?.locations)
+      ? job.locations.map((item) => item?._id || item).filter(Boolean)
+      : [];
+
+    if (populatedIds.length) {
+      return populatedIds;
+    }
+
+    const fallbackNames = String(job?.location || '')
+      .split(',')
+      .map((item) => item.trim())
+      .filter(Boolean);
+
+    return locationOptions
+      .filter((option) => fallbackNames.some((name) => name.toLowerCase() === option.locationName.toLowerCase()))
+      .map((option) => option._id);
+  };
+
   const openEdit = (job) => {
     setSuccess('');
     setError('');
@@ -81,7 +105,7 @@ const ManageJobs = () => {
       title: job.title || '',
       description: job.description || '',
       salary: job.salary || '',
-      location: job.location || '',
+      locations: getSelectedLocationIds(job),
       jobType: job?.jobType?._id || '',
     });
     setEditOpen(true);
@@ -286,7 +310,29 @@ const ManageJobs = () => {
               sx={fieldSx}
             />
             <TextField name="salary" label="Salary" value={editForm.salary} onChange={handleEditChange} fullWidth sx={fieldSx} />
-            <TextField name="location" label="Location" value={editForm.location} onChange={handleEditChange} fullWidth sx={fieldSx} />
+            <TextField
+              select
+              name="locations"
+              label="Locations"
+              value={editForm.locations}
+              onChange={handleEditChange}
+              fullWidth
+              sx={fieldSx}
+              SelectProps={{
+                multiple: true,
+                renderValue: (selected) => locationOptions
+                  .filter((option) => selected.includes(option._id))
+                  .map((option) => option.locationName)
+                  .join(', '),
+              }}
+            >
+              {locationOptions.map((option) => (
+                <MenuItem key={option._id} value={option._id}>
+                  <Checkbox checked={editForm.locations.includes(option._id)} size="small" />
+                  <ListItemText primary={option.locationName} />
+                </MenuItem>
+              ))}
+            </TextField>
             <TextField
               select
               name="jobType"

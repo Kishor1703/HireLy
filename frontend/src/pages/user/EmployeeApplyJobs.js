@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Box, Typography, Stack, Pagination, Divider, Chip
+  Box, Typography, Stack, Pagination, Divider
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { jobLoadAction } from '../../redux/actions/jobAction';
@@ -8,10 +8,10 @@ import { jobTypeLoadAction } from '../../redux/actions/jobTypeAction';
 import SelectComponent from '../../components/SelectComponent';
 import CardElement from '../../components/CardElement';
 import LoadingBox from '../../components/LoadingBox';
-import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
 import TuneOutlinedIcon from '@mui/icons-material/TuneOutlined';
 import SearchOffOutlinedIcon from '@mui/icons-material/SearchOffOutlined';
+import LocationFilterGroup from '../../components/LocationFilterGroup';
 
 const EmployeeApplyJobs = () => {
   const { jobs, setUniqueLocation, pages, loading } = useSelector((state) => state.loadJobs);
@@ -19,18 +19,26 @@ const EmployeeApplyJobs = () => {
 
   const [page, setPage]         = useState(1);
   const [cat, setCat]           = useState('');
-  const [location, setLocation] = useState('');
+  const [selectedLocations, setSelectedLocations] = useState([]);
   const [keyword]               = useState('');
 
   useEffect(() => {
-    dispatch(jobLoadAction(page, keyword, cat, location));
-  }, [dispatch, page, keyword, cat, location]);
+    dispatch(jobLoadAction(page, keyword, cat, selectedLocations));
+  }, [dispatch, page, keyword, cat, selectedLocations]);
 
   useEffect(() => {
     dispatch(jobTypeLoadAction());
   }, [dispatch]);
 
   const handleChangeCategory = (e) => { setCat(e.target.value); setPage(1); };
+  const handleToggleLocation = (locationId) => {
+    setSelectedLocations((prev) => (
+      prev.includes(locationId)
+        ? prev.filter((id) => id !== locationId)
+        : [...prev, locationId]
+    ));
+    setPage(1);
+  };
 
   return (
     <Box>
@@ -87,46 +95,12 @@ const EmployeeApplyJobs = () => {
             <Typography sx={{ fontSize: '0.78rem', fontWeight: 700, color: '#0a2463', mb: 1.5, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
               Location
             </Typography>
-
-            {/* All locations chip */}
-            <Chip
-              icon={<LocationOnOutlinedIcon sx={{ fontSize: '14px !important' }} />}
-              label="All Locations"
-              onClick={() => { setLocation(''); setPage(1); }}
-              size="small"
-              sx={{
-                mb: 1, width: '100%',
-                justifyContent: 'flex-start',
-                borderRadius: '8px',
-                bgcolor: location === '' ? '#dbeafe' : '#f8faff',
-                color: location === '' ? '#1e4fd8' : '#64748b',
-                border: `1px solid ${location === '' ? '#bfdbfe' : '#e2e8f0'}`,
-                fontWeight: location === '' ? 700 : 500,
-                fontSize: '0.78rem',
-                '&:hover': { bgcolor: '#eff6ff', color: '#1e4fd8' },
-              }}
+            <LocationFilterGroup
+              options={setUniqueLocation || []}
+              selectedIds={selectedLocations}
+              onToggle={handleToggleLocation}
+              onClear={() => { setSelectedLocations([]); setPage(1); }}
             />
-
-            {setUniqueLocation && setUniqueLocation.map((loc, i) => (
-              <Chip
-                key={i}
-                icon={<LocationOnOutlinedIcon sx={{ fontSize: '14px !important' }} />}
-                label={loc}
-                onClick={() => { setLocation(loc); setPage(1); }}
-                size="small"
-                sx={{
-                  mb: 1, width: '100%',
-                  justifyContent: 'flex-start',
-                  borderRadius: '8px',
-                  bgcolor: location === loc ? '#dbeafe' : '#f8faff',
-                  color: location === loc ? '#1e4fd8' : '#64748b',
-                  border: `1px solid ${location === loc ? '#bfdbfe' : '#e2e8f0'}`,
-                  fontWeight: location === loc ? 700 : 500,
-                  fontSize: '0.78rem',
-                  '&:hover': { bgcolor: '#eff6ff', color: '#1e4fd8' },
-                }}
-              />
-            ))}
           </Box>
         </Box>
 

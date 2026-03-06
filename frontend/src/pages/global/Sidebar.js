@@ -3,6 +3,7 @@ import { Sidebar, Menu, MenuItem, menuClasses } from 'react-pro-sidebar';
 import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
 import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
+import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import WorkHistoryOutlinedIcon from '@mui/icons-material/WorkHistoryOutlined';
 import Person3OutlinedIcon from '@mui/icons-material/Person3Outlined';
 import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
@@ -24,6 +25,7 @@ const roleConfig = {
     items: [
       { to: '/admin/dashboard', icon: <DashboardOutlinedIcon />,   label: 'Dashboard'  },
       { to: '/admin/category',  icon: <CategoryOutlinedIcon />,    label: 'Category'   },
+      { to: '/admin/location',  icon: <LocationOnOutlinedIcon />,  label: 'Location'   },
     ],
   },
   2: {
