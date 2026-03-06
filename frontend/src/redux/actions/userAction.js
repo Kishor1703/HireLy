@@ -12,8 +12,8 @@ import { USER_LOAD_FAIL,
     USER_SIGNIN_RESET, 
     USER_SIGNIN_SUCCESS } from '../constants/userConstant';
 
-
-
+const getErrorMessage = (error, fallback) =>
+    error?.response?.data?.error || error?.response?.data?.message || error?.message || fallback;
 
 export const userSignInAction = (user) => async (dispatch) => {
     dispatch({ type: USER_SIGNIN_REQUEST });
@@ -47,11 +47,12 @@ export const userSignInAction = (user) => async (dispatch) => {
         });
         toast.success("Login Successfully!");
     } catch (error) {
+        const message = getErrorMessage(error, 'Unable to sign in');
         dispatch({
             type: USER_SIGNIN_FAIL,
-            payload: error.response.data.error
+            payload: message
         });
-        toast.error(error.response.data.error);
+        toast.error(message);
     }
 }
 
@@ -92,7 +93,7 @@ export const userProfileAction = () => async (dispatch) => {
     } catch (error) {
         dispatch({
             type: USER_LOAD_FAIL,
-            payload: error.response.data.error
+            payload: getErrorMessage(error, 'Failed to load user profile')
         });
     }
 }

@@ -27,6 +27,8 @@ import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
 import VerifiedOutlinedIcon from '@mui/icons-material/VerifiedOutlined';
 
+const NAVBAR_HEIGHT = 90;
+
 // ── Reusable field label ──────────────────────────────────
 const FieldLabel = ({ children, required }) => (
   <Typography sx={{ fontSize: '0.78rem', fontWeight: 600, color: '#475569', mb: 0.6 }}>
@@ -415,7 +417,7 @@ const JobDetails = () => {
         minHeight: '100vh',
         background: 'linear-gradient(160deg, #eff6ff 0%, #ffffff 55%, #dbeafe 100%)',
         position: 'relative', overflow: 'hidden',
-        pt: { xs: 10, md: 11 }, pb: 8,
+        pt: `calc(${NAVBAR_HEIGHT}px + 20px)`, pb: 8,
       }}>
         <Box sx={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none', backgroundImage: 'linear-gradient(rgba(31,79,216,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(31,79,216,0.04) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
 
@@ -488,10 +490,6 @@ const JobDetails = () => {
                   <InfoBadge icon={<CategoryOutlinedIcon />}    label="Category" value={job?.jobType?.jobTypeName || 'Not specified'} />
                 </Box>
 
-                {/* Divider before apply section */}
-                <Divider sx={{ borderColor: '#dbeafe', mb: 3 }} />
-
-                {renderApplySection()}
               </Box>
 
               {/* Description card */}
@@ -504,6 +502,18 @@ const JobDetails = () => {
                 <Typography sx={{ color: '#475569', lineHeight: 1.85, fontSize: '0.95rem', whiteSpace: 'pre-line' }}>
                   {job.description || 'No description available'}
                 </Typography>
+              </Box>
+
+              {/* Application card */}
+              <Box sx={{ bgcolor: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(12px)', borderRadius: '20px', border: '1.5px solid #dbeafe', boxShadow: '0 4px 20px rgba(10,36,99,0.06)', p: { xs: 2.5, sm: 3.5 } }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                  <SendOutlinedIcon sx={{ color: '#1e4fd8', fontSize: 20 }} />
+                  <Typography sx={{ fontWeight: 700, fontSize: '1.05rem', color: '#0a2463' }}>
+                    Apply Now
+                  </Typography>
+                </Box>
+                <Divider sx={{ borderColor: '#dbeafe', mb: 2 }} />
+                {renderApplySection()}
               </Box>
 
               {/* Company profile card */}

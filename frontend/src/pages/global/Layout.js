@@ -1,13 +1,23 @@
 import { Box } from '@mui/material';
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 import HeaderTop from './HeaderTop';
 import SidebarAdm from './Sidebar';
+import PageTransition from '../../components/PageTransition';
 
 const Layout = (Component) => {
   const WrappedWithLayout = (props) => {
     const [collapsed, setCollapsed] = React.useState(false);
     const [toggled, setToggled] = React.useState(false);
     const [broken, setBroken] = React.useState(false);
+    const contentRef = React.useRef(null);
+    const { pathname } = useLocation();
+
+    React.useEffect(() => {
+      if (contentRef.current) {
+        contentRef.current.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      }
+    }, [pathname]);
 
     return (
       <Box sx={{ display: 'flex', minHeight: '100dvh', overflow: 'hidden' }}>
@@ -59,7 +69,8 @@ const Layout = (Component) => {
             position: 'relative',
             zIndex: 1,
             p: { xs: 1.25, sm: 2.25, md: 3 },
-          }}>
+          }}
+          ref={contentRef}>
             {/* White content card */}
             <Box sx={{
               bgcolor: 'rgba(255,255,255,0.85)',
@@ -70,7 +81,9 @@ const Layout = (Component) => {
               p: { xs: 1.5, sm: 2.5, md: 3 },
               minHeight: '100%',
             }}>
-              <Component {...props} />
+              <PageTransition sx={{ minHeight: '100%' }}>
+                <Component {...props} />
+              </PageTransition>
             </Box>
           </Box>
 

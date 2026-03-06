@@ -25,6 +25,8 @@ import JobDetails from './pages/JobDetails';
 import CompanyProfile from './pages/poster/CompanyProfile';
 import PosterApplications from './pages/poster/PosterApplications';
 import ManageJobs from './pages/poster/ManageJobs';
+import PageTransition from './components/PageTransition';
+import ScrollToTop from './components/ScrollToTop';
 
 //HOC
 const UserDashboardHOC = Layout(UserDashboard);
@@ -37,6 +39,10 @@ const AdminCategoryHOC = Layout(AdminCategory);
 const CompanyProfileHOC = Layout(CompanyProfile);
 const PosterApplicationsHOC = Layout(PosterApplications);
 const ManageJobsHOC = Layout(ManageJobs);
+
+const withPageTransition = (element) => (
+  <PageTransition>{element}</PageTransition>
+);
 
 
 // Define your theme object
@@ -54,18 +60,19 @@ const App = () => {
             v7_relativeSplatPath: true,
           }}
         >
+          <ScrollToTop />
           <Routes>
-            <Route path='/' element={<CommonHome />} />
-            <Route path='/jobs' element={<Home />} />
-            <Route path='/job/:id' element={<JobDetails />} />
-            <Route path='/search/location/:location' element={<Home />} />
-            <Route path='/search/:keyword' element={<Home />} />
-            <Route path='/login' element={<LogIn />} />
-            <Route path='/admin/login' element={<LogIn forcedRole="admin" />} />
-            <Route path='/register' element={<Register />} />
-            <Route path='/verify-email' element={<VerifyEmail />} />
-            <Route path='/forgot-password' element={<ForgotPassword />} />
-            <Route path='/reset-password' element={<ResetPassword />} />
+            <Route path='/' element={withPageTransition(<CommonHome />)} />
+            <Route path='/jobs' element={withPageTransition(<Home />)} />
+            <Route path='/job/:id' element={withPageTransition(<JobDetails />)} />
+            <Route path='/search/location/:location' element={withPageTransition(<Home />)} />
+            <Route path='/search/:keyword' element={withPageTransition(<Home />)} />
+            <Route path='/login' element={withPageTransition(<LogIn />)} />
+            <Route path='/admin/login' element={withPageTransition(<LogIn forcedRole="admin" />)} />
+            <Route path='/register' element={withPageTransition(<Register />)} />
+            <Route path='/verify-email' element={withPageTransition(<VerifyEmail />)} />
+            <Route path='/forgot-password' element={withPageTransition(<ForgotPassword />)} />
+            <Route path='/reset-password' element={withPageTransition(<ResetPassword />)} />
             <Route path='/user/dashboard' element={<UserRoute allowedRoles={[0]}><UserDashboardHOC /></UserRoute>} />
             <Route path='/user/apply-jobs' element={<UserRoute allowedRoles={[0]}><EmployeeApplyJobsHOC /></UserRoute>} />
             <Route path='/poster/dashboard' element={<UserRoute allowedRoles={[2]}><JobPosterDashboardHOC /></UserRoute>} />
@@ -79,7 +86,7 @@ const App = () => {
             <Route path='/admin/category' element={<UserRoute allowedRoles={[1]}><AdminCategoryHOC /></UserRoute>} />
             <Route path='/user/jobs' element={<UserRoute allowedRoles={[0]}><UserJobsHistoryHOC /></UserRoute>} />
             <Route path='/user/info' element={<UserRoute allowedRoles={[0]}><UserInfoDasboardHOC /></UserRoute>} />
-            <Route path='*' element={<NotFound />} />
+            <Route path='*' element={withPageTransition(<NotFound />)} />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>

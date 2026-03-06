@@ -1,6 +1,9 @@
 import axios from 'axios';
 import { JOB_TYPE_LOAD_FAIL, JOB_TYPE_LOAD_REQUEST, JOB_TYPE_LOAD_SUCCESS } from '../constants/jobTypeConstant';
 
+const getErrorMessage = (error, fallback) =>
+    error?.response?.data?.error || error?.response?.data?.message || error?.message || fallback;
+
 
 
 export const jobTypeLoadAction = () => async (dispatch) => {
@@ -14,7 +17,7 @@ export const jobTypeLoadAction = () => async (dispatch) => {
     } catch (error) {
         dispatch({
             type: JOB_TYPE_LOAD_FAIL,
-            payload: error.response.data.error
+            payload: getErrorMessage(error, 'Failed to load job categories')
         });
     }
 }

@@ -19,6 +19,28 @@
   border-radius: 12px;
 }
 
+.page-transition {
+  width: 100%;
+  animation: pageFadeIn 320ms ease-out both;
+  will-change: opacity;
+}
+
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-transition {
+    animation: none;
+  }
+}
+
 @media (max-width: 900px) {
   .form_style {
     width: 80%;
