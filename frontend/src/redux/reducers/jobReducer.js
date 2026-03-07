@@ -4,7 +4,11 @@ import { JOB_LOAD_FAIL, JOB_LOAD_REQUEST, JOB_LOAD_RESET, JOB_LOAD_SUCCESS } fro
 export const loadJobReducer = (state = { jobs: [] }, action) => {
     switch (action.type) {
         case JOB_LOAD_REQUEST:
-            return { loading: true }
+            return {
+                ...state,
+                loading: true,
+                error: null,
+            }
         case JOB_LOAD_SUCCESS:
             return {
                 loading: false,
@@ -17,6 +21,7 @@ export const loadJobReducer = (state = { jobs: [] }, action) => {
             }
         case JOB_LOAD_FAIL:
             return {
+                ...state,
                 loading: false,
                 error: action.payload
             }

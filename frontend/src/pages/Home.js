@@ -164,6 +164,7 @@ const Home = () => {
   };
 
   const activeFiltersCount = (cat ? 1 : 0) + selectedLocations.length;
+  const hasJobs = Array.isArray(jobs) && jobs.length > 0;
 
   return (
     <>
@@ -260,7 +261,7 @@ const Home = () => {
                   <WorkOutlineIcon sx={{ fontSize: 16, color: '#64748b' }} />
                   <Typography sx={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 500 }}>
                     {loading
-                      ? 'Loading jobs...'
+                      ? hasJobs ? 'Updating jobs...' : 'Loading jobs...'
                       : jobs?.length
                         ? `${jobs.length} job${jobs.length !== 1 ? 's' : ''} found`
                         : 'No results'}
@@ -285,7 +286,7 @@ const Home = () => {
               <Divider sx={{ borderColor: '#dbeafe', mb: 2.5 }} />
 
               {/* Job cards or states */}
-              {loading ? (
+              {loading && !hasJobs ? (
                 <LoadingBox />
               ) : jobs && jobs.length === 0 ? (
                 <EmptyState />
@@ -307,8 +308,16 @@ const Home = () => {
                 </Stack>
               )}
 
+              {loading && hasJobs && (
+                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                  <Typography sx={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 500 }}>
+                    Updating results...
+                  </Typography>
+                </Box>
+              )}
+
               {/* Pagination */}
-              {!loading && jobs && jobs.length > 0 && (
+              {jobs && jobs.length > 0 && (
                 <Box
                   sx={{
                     display: 'flex',
