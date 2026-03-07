@@ -310,12 +310,12 @@ const Navbar = () => {
                   <LoginIcon fontSize="small" /> Sign In
                 </MenuItem>
               )}
-              {!userInfo && (
+              {/* {!userInfo && (
                 <MenuItem component={Link} to="/admin/login" onClick={handleCloseUserMenu}
                   sx={{ gap: 1.5, py: 1.3, color: '#334155', fontSize: '0.92rem', '&:hover': { bgcolor: '#eff6ff', color: '#1e4fd8' } }}>
                   <LoginIcon fontSize="small" /> Admin Sign In
                 </MenuItem>
-              )}
+              )} */}
               {!userInfo && (
                 <MenuItem component={Link} to="/register" onClick={handleCloseUserMenu}
                   sx={{ gap: 1.5, py: 1.3, color: '#334155', fontSize: '0.92rem', '&:hover': { bgcolor: '#eff6ff', color: '#1e4fd8' } }}>
