@@ -249,14 +249,20 @@ const JobPosterDashboard = () => {
             />
           </Box>
 
-          {/* Salary + Location side by side */}
-          <Grid container spacing={2}>
+          {/* Salary + Location side by side — FIXED ALIGNMENT */}
+          <Grid container spacing={2} alignItems="flex-start">
             <Grid item xs={12} sm={6}>
               <FieldLabel icon={<AttachMoneyOutlinedIcon />} required>Salary</FieldLabel>
               <TextField
                 value={salary} onChange={(e) => setSalary(e.target.value)}
                 required fullWidth placeholder="e.g. $80,000 – $100,000"
-                sx={fieldSx}
+                sx={{
+                  ...fieldSx,
+                  '& .MuiOutlinedInput-root': {
+                    ...fieldSx['& .MuiOutlinedInput-root'],
+                    height: '56px',         // ← fixed height to match select
+                  },
+                }}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -267,24 +273,41 @@ const JobPosterDashboard = () => {
                 onChange={(e) => setLocations(e.target.value)}
                 required
                 fullWidth
-                sx={fieldSx}
+                sx={{
+                  ...fieldSx,
+                  '& .MuiOutlinedInput-root': {
+                    ...fieldSx['& .MuiOutlinedInput-root'],
+                    height: '56px',         // ← same fixed height
+                    alignItems: 'center',
+                  },
+                  '& .MuiSelect-select': {
+                    display: 'flex',
+                    alignItems: 'center',
+                    py: '14px',
+                  },
+                }}
                 SelectProps={{
                   multiple: true,
                   displayEmpty: true,
                   renderValue: (selected) => {
                     if (!selected.length) {
-                      return <Typography sx={{ color: '#94a3b8', fontSize: '0.9rem' }}>Select one or more locations</Typography>;
+                      return (
+                        <Typography sx={{ color: '#94a3b8', fontSize: '0.9rem' }}>
+                          Select one or more locations
+                        </Typography>
+                      );
                     }
-
                     return locationOptions
-                      .filter((option) => selected.includes(option._id))
-                      .map((option) => option.locationName)
+                      .filter((o) => selected.includes(o._id))
+                      .map((o) => o.locationName)
                       .join(', ');
                   },
                 }}
               >
                 <MenuItem value="" disabled>
-                  <Typography sx={{ color: '#94a3b8', fontSize: '0.9rem' }}>Select one or more locations</Typography>
+                  <Typography sx={{ color: '#94a3b8', fontSize: '0.9rem' }}>
+                    Select one or more locations
+                  </Typography>
                 </MenuItem>
                 {locationOptions.map((option) => (
                   <MenuItem key={option._id} value={option._id}>
@@ -305,7 +328,6 @@ const JobPosterDashboard = () => {
               required fullWidth
               sx={fieldSx}
               SelectProps={{ displayEmpty: true }}
-              inputProps={{ placeholder: 'Select a category' }}
             >
               <MenuItem value="" disabled>
                 <Typography sx={{ color: '#94a3b8', fontSize: '0.9rem' }}>Select a category</Typography>
