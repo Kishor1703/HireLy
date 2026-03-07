@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import NavBar from '../components/NavBar';
 import Header from '../components/Header';
 import {
-  Box, Card, Container, Stack, Typography, useTheme,
+  Box, Card, Container, Stack, Typography,
   Chip, Divider, Pagination,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
