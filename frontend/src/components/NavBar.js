@@ -17,6 +17,10 @@ import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
 import LogoutIcon from '@mui/icons-material/Logout';
 import LoginIcon from '@mui/icons-material/Login';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
+import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import AddBusinessOutlinedIcon from '@mui/icons-material/AddBusinessOutlined';
+import AdminPanelSettingsOutlinedIcon from '@mui/icons-material/AdminPanelSettingsOutlined';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { userLogoutAction } from '../redux/actions/userAction';
@@ -63,6 +67,20 @@ const Navbar = () => {
     if (userInfo.role === 2) return 'Job Poster';
     return 'Job Seeker';
   };
+
+  const navItems = [
+    { label: 'Home', to: getHomePath(), icon: <HomeOutlinedIcon fontSize="small" /> },
+    { label: 'Browse Jobs', to: '/jobs', icon: <WorkOutlineIcon fontSize="small" /> },
+    ...(userInfo?.role === 2
+      ? [{ label: 'Post a Job', to: '/poster/dashboard', icon: <AddBusinessOutlinedIcon fontSize="small" /> }]
+      : []),
+  ];
+
+  const guestMenuItems = [
+    { label: 'Sign In', to: '/login', icon: <LoginIcon fontSize="small" /> },
+    { label: 'Register', to: '/register', icon: <AppRegistrationIcon fontSize="small" /> },
+    { label: 'Admin Sign In', to: '/admin/login', icon: <AdminPanelSettingsOutlinedIcon fontSize="small" /> },
+  ];
 
   const LogoMark = ({ size = 52 }) => (
     <Box sx={{
@@ -136,8 +154,41 @@ const Navbar = () => {
                 },
               }}
             >
-              <MenuItem component={Link} to={getHomePath()} onClick={handleCloseNavMenu}>Home</MenuItem>
-              <MenuItem component={Link} to="/jobs" onClick={handleCloseNavMenu}>Browse Jobs</MenuItem>
+              {navItems.map((item) => (
+                <MenuItem
+                  key={item.label}
+                  component={Link}
+                  to={item.to}
+                  onClick={handleCloseNavMenu}
+                  sx={{ gap: 1.2, py: 1.3, color: '#334155' }}
+                >
+                  {item.icon}
+                  {item.label}
+                </MenuItem>
+              ))}
+              <Divider sx={{ borderColor: '#dbeafe' }} />
+              {!userInfo ? (
+                guestMenuItems.map((item) => (
+                  <MenuItem
+                    key={item.label}
+                    component={Link}
+                    to={item.to}
+                    onClick={handleCloseNavMenu}
+                    sx={{ gap: 1.2, py: 1.3, color: '#334155' }}
+                  >
+                    {item.icon}
+                    {item.label}
+                  </MenuItem>
+                ))
+              ) : (
+                <MenuItem
+                  onClick={async () => { handleCloseNavMenu(); await logOut(); }}
+                  sx={{ gap: 1.2, py: 1.3, color: '#ef4444' }}
+                >
+                  <LogoutIcon fontSize="small" />
+                  Log Out
+                </MenuItem>
+              )}
             </Menu>
           </Box>
 
@@ -164,10 +215,7 @@ const Navbar = () => {
 
           {/* ── DESKTOP NAV LINKS ── */}
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, gap: 0.5 }}>
-            {[
-              { label: 'Home',        to: getHomePath() },
-              { label: 'Browse Jobs', to: '/jobs'       },
-            ].map((item) => (
+            {navItems.map((item) => (
               <Button
                 key={item.label}
                 component={Link}
@@ -225,6 +273,36 @@ const Navbar = () => {
                   Get Started
                 </Button>
               </>
+            )}
+
+            {userInfo && (
+              <Box sx={{ display: { xs: 'none', md: 'block' }, textAlign: 'right' }}>
+                <Typography sx={{ fontSize: '0.8rem', fontWeight: 700, color: '#0a2463', lineHeight: 1.2 }}>
+                  {getDisplayName()}
+                </Typography>
+                <Typography sx={{ fontSize: '0.72rem', color: '#64748b' }}>
+                  {getRoleLabel()}
+                </Typography>
+              </Box>
+            )}
+
+            {userInfo?.role === 2 && (
+              <Button
+                component={Link}
+                to="/poster/dashboard"
+                variant="text"
+                sx={{
+                  display: { xs: 'none', md: 'flex' },
+                  textTransform: 'none',
+                  fontWeight: 700,
+                  fontSize: '0.95rem',
+                  color: '#0a2463',
+                  px: 1.5,
+                  '&:hover': { bgcolor: '#eff6ff', color: '#1e4fd8' },
+                }}
+              >
+                Post a Job
+              </Button>
             )}
 
             {/* Avatar — slightly bigger */}
@@ -310,12 +388,12 @@ const Navbar = () => {
                   <LoginIcon fontSize="small" /> Sign In
                 </MenuItem>
               )}
-              {/* {!userInfo && (
+              {!userInfo && (
                 <MenuItem component={Link} to="/admin/login" onClick={handleCloseUserMenu}
                   sx={{ gap: 1.5, py: 1.3, color: '#334155', fontSize: '0.92rem', '&:hover': { bgcolor: '#eff6ff', color: '#1e4fd8' } }}>
-                  <LoginIcon fontSize="small" /> Admin Sign In
+                  <AdminPanelSettingsOutlinedIcon fontSize="small" /> Admin Sign In
                 </MenuItem>
-              )} */}
+              )}
               {!userInfo && (
                 <MenuItem component={Link} to="/register" onClick={handleCloseUserMenu}
                   sx={{ gap: 1.5, py: 1.3, color: '#334155', fontSize: '0.92rem', '&:hover': { bgcolor: '#eff6ff', color: '#1e4fd8' } }}>

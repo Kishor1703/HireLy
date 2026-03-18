@@ -1,5 +1,6 @@
 import { Box, Typography, Chip } from '@mui/material';
 import React from 'react';
+import { Link } from 'react-router-dom';
 import headerImage from '../images/jobbg.png';
 import SearchInputEl from './SearchInputEl';
 
@@ -117,6 +118,9 @@ const Header = () => {
             <Chip
               key={tag}
               label={tag}
+              component={Link}
+              to={`/search/${encodeURIComponent(tag)}`}
+              clickable
               size="small"
               sx={{
                 bgcolor: 'rgba(255,255,255,0.1)',

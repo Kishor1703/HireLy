@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import {
   Box, Button, Divider,TextField, Typography, InputAdornment, IconButton,
 } from '@mui/material';
@@ -34,10 +34,12 @@ const roleCards = [
 
 function Register() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [showPassword, setShowPassword] = React.useState(false);
+  const initialRole = searchParams.get('role') === 'poster' ? 2 : 0;
 
   const formik = useFormik({
-    initialValues: { firstName: '', lastName: '', email: '', password: '', role: 0, companyName: '' },
+    initialValues: { firstName: '', lastName: '', email: '', password: '', role: initialRole, companyName: '' },
     validationSchema,
     onSubmit: async (values, actions) => {
       actions.setStatus(null);
