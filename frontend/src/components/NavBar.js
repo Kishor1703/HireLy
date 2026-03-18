@@ -286,25 +286,6 @@ const Navbar = () => {
               </Box>
             )}
 
-            {userInfo?.role === 2 && (
-              <Button
-                component={Link}
-                to="/poster/dashboard"
-                variant="text"
-                sx={{
-                  display: { xs: 'none', md: 'flex' },
-                  textTransform: 'none',
-                  fontWeight: 700,
-                  fontSize: '0.95rem',
-                  color: '#0a2463',
-                  px: 1.5,
-                  '&:hover': { bgcolor: '#eff6ff', color: '#1e4fd8' },
-                }}
-              >
-                Post a Job
-              </Button>
-            )}
-
             {/* Avatar — slightly bigger */}
             <Tooltip title={userInfo ? getDisplayName() : 'Account'}>
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0.5 }}>
