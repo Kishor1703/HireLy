@@ -24,6 +24,8 @@ import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import AttachMoneyOutlinedIcon from '@mui/icons-material/AttachMoneyOutlined';
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import ApplicationFormBuilder from '../../components/ApplicationFormBuilder';
+import { getDefaultApplicationForm, normalizeApplicationForm } from '../../utils/applicationForm';
 
 const fieldSx = {
   '& .MuiOutlinedInput-root': {
@@ -51,6 +53,7 @@ const ManageJobs = () => {
     salary: '',
     locations: [],
     jobType: '',
+    applicationForm: getDefaultApplicationForm(),
   });
 
   const totalJobs = useMemo(() => jobs.length, [jobs]);
@@ -107,6 +110,7 @@ const ManageJobs = () => {
       salary: job.salary || '',
       locations: getSelectedLocationIds(job),
       jobType: job?.jobType?._id || '',
+      applicationForm: normalizeApplicationForm(job?.applicationForm),
     });
     setEditOpen(true);
   };
@@ -348,6 +352,10 @@ const ManageJobs = () => {
                 </MenuItem>
               ))}
             </TextField>
+            <ApplicationFormBuilder
+              value={normalizeApplicationForm(editForm.applicationForm)}
+              onChange={(applicationForm) => setEditForm((prev) => ({ ...prev, applicationForm }))}
+            />
           </Stack>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2 }}>

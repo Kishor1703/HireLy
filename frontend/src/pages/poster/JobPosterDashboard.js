@@ -13,6 +13,8 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
 import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
+import ApplicationFormBuilder from '../../components/ApplicationFormBuilder';
+import { getDefaultApplicationForm, normalizeApplicationForm } from '../../utils/applicationForm';
 
 const fieldSx = {
   '& .MuiOutlinedInput-root': {
@@ -49,6 +51,7 @@ const JobPosterDashboard = () => {
   const [companyName, setCompanyName] = useState('');
   const [companyLogo, setCompanyLogo] = useState('');
   const [companyApprovalStatus, setCompanyApprovalStatus] = useState('approved');
+  const [applicationForm, setApplicationForm] = useState(getDefaultApplicationForm());
 
   useEffect(() => {
     Promise.all([
@@ -81,10 +84,10 @@ const JobPosterDashboard = () => {
     setMessage(''); setError(''); setLoading(true);
     try {
       await axios.post('/api/job/create', {
-        title, description, salary, locations, jobType, companyName, companyLogo,
+        title, description, salary, locations, jobType, companyName, companyLogo, applicationForm,
       });
       setMessage('Job posted successfully!');
-      setTitle(''); setDescription(''); setSalary(''); setLocations([]); setJobType('');
+      setTitle(''); setDescription(''); setSalary(''); setLocations([]); setJobType(''); setApplicationForm(getDefaultApplicationForm());
     } catch (err) {
       setError(err?.response?.data?.error || err?.response?.data?.message || 'Job posting failed');
     } finally {
@@ -340,6 +343,11 @@ const JobPosterDashboard = () => {
               ))}
             </TextField>
           </Box>
+
+          <ApplicationFormBuilder
+            value={normalizeApplicationForm(applicationForm)}
+            onChange={setApplicationForm}
+          />
 
           {/* Submit */}
           <Box sx={{ pt: 1 }}>

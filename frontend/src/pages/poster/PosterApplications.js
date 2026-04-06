@@ -20,6 +20,8 @@ import MailOutlineOutlinedIcon from '@mui/icons-material/MailOutlineOutlined';
 import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 
+const COMMON_ANSWER_FIELDS = new Set(['fullName', 'email', 'phone', 'resume', 'location', 'experienceLevel']);
+
 const StatCard = ({ label, value }) => (
   <Box sx={{
     bgcolor: '#f8faff',
@@ -239,8 +241,8 @@ const PosterApplications = () => {
               >
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, flexWrap: 'wrap' }}>
                   <Typography sx={{ fontWeight: 700, color: '#0a2463' }}>
-                    {(app.firstName || app.lastName)
-                      ? `${app.firstName || ''} ${app.lastName || ''}`.trim()
+                    {(app.fullName || app.firstName || app.lastName)
+                      ? (app.fullName || `${app.firstName || ''} ${app.lastName || ''}`.trim())
                       : 'Applicant'}
                   </Typography>
                   <Stack direction="row" spacing={1} alignItems="center">
@@ -260,7 +262,33 @@ const PosterApplications = () => {
                     <PhoneOutlinedIcon sx={{ fontSize: 14 }} />
                     {app.phone || 'Phone not provided'}
                   </Typography>
+                  {app.location && (
+                    <Typography sx={{ fontSize: '0.8rem', color: '#475569', display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                      <LocationOnOutlinedIcon sx={{ fontSize: 14 }} />
+                      {app.location}
+                    </Typography>
+                  )}
+                  {app.experienceLevel && (
+                    <Typography sx={{ fontSize: '0.8rem', color: '#475569' }}>
+                      Experience: {app.experienceLevel}
+                    </Typography>
+                  )}
                 </Stack>
+
+                {Array.isArray(app.answers) && app.answers.some((answer) => !COMMON_ANSWER_FIELDS.has(answer.fieldId)) && (
+                  <Box sx={{ mb: 1.2, p: 1.2, borderRadius: '10px', bgcolor: '#fff', border: '1px solid #e2e8f0' }}>
+                    <Typography sx={{ fontSize: '0.76rem', fontWeight: 700, color: '#0a2463', mb: 0.8 }}>
+                      Additional Answers
+                    </Typography>
+                    <Stack spacing={0.7}>
+                      {app.answers.filter((answer) => !COMMON_ANSWER_FIELDS.has(answer.fieldId)).map((answer) => (
+                        <Typography key={`${app._id}-${answer.fieldId}`} sx={{ fontSize: '0.8rem', color: '#475569' }}>
+                          <Box component="span" sx={{ fontWeight: 700, color: '#0f172a' }}>{answer.label}:</Box> {answer.value || 'Not provided'}
+                        </Typography>
+                      ))}
+                    </Stack>
+                  </Box>
+                )}
 
                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} useFlexGap>
                   <Button
