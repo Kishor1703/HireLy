@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import axios from 'axios';
 import {
   Box, Button, Chip, CircularProgress, Container, Divider, InputAdornment, MenuItem, TextField, Typography,
@@ -78,6 +78,7 @@ const JobDetails = () => {
   const [resumeFileName, setResumeFileName] = useState('');
   const [profileData, setProfileData] = useState(null);
   const [latestApplication, setLatestApplication] = useState(null);
+  const resumeClearedRef = useRef(false);
 
   const { userInfo } = useSelector((state) => state.signIn || {});
   const isJobSeeker = userInfo?.role === 0;
@@ -126,8 +127,17 @@ const JobDetails = () => {
       profile: profileData,
       latestApplication,
     });
-    setFormData((prev) => ({ ...nextValues, ...prev }));
-    if (nextValues.resume && !resumeFileName) {
+    setFormData((prev) => {
+      const merged = { ...nextValues };
+      Object.entries(prev).forEach(([key, value]) => {
+        const hasValue = String(value || '').trim();
+        if (hasValue || (key === 'resume' && resumeClearedRef.current)) {
+          merged[key] = value;
+        }
+      });
+      return merged;
+    });
+    if (nextValues.resume && !resumeFileName && !resumeClearedRef.current) {
       setResumeFileName('Saved resume ready');
     }
   }, [applicationFields, latestApplication, profileData, resumeFileName, userInfo]);
@@ -171,6 +181,7 @@ const JobDetails = () => {
     }
     const reader = new FileReader();
     reader.onload = () => {
+      resumeClearedRef.current = false;
       setFormData((prev) => ({ ...prev, resume: String(reader.result || '') }));
       setResumeFileName(file.name);
       setApplyError('');
@@ -190,6 +201,7 @@ const JobDetails = () => {
     processFile(event.dataTransfer.files?.[0]);
   };
   const clearResume = () => {
+    resumeClearedRef.current = true;
     setResumeFileName('');
     setFormData((prev) => ({ ...prev, resume: '' }));
   };
