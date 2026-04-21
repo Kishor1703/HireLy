@@ -122,6 +122,53 @@ const PosterApplications = () => {
     return String(resume).startsWith('data:') ? 'Download Resume' : 'Open Resume';
   };
 
+  const getResumeDownloadName = (app) => {
+    const name = (app.fullName || app.firstName || 'candidate')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '') || 'candidate';
+    const mime = String(app.resume || '').match(/^data:([^;,]+)/)?.[1] || '';
+    const extension = mime.includes('pdf')
+      ? 'pdf'
+      : mime.includes('wordprocessingml')
+        ? 'docx'
+        : mime.includes('msword')
+          ? 'doc'
+          : 'resume';
+    return `${name}-resume.${extension}`;
+  };
+
+  const downloadDataResume = (app) => {
+    const resume = String(app.resume || '');
+    const [header, payload = ''] = resume.split(',');
+    const mime = header.match(/^data:([^;,]+)/)?.[1] || 'application/octet-stream';
+    const binary = window.atob(payload);
+    const bytes = new Uint8Array(binary.length);
+
+    for (let index = 0; index < binary.length; index += 1) {
+      bytes[index] = binary.charCodeAt(index);
+    }
+
+    const objectUrl = window.URL.createObjectURL(new Blob([bytes], { type: mime }));
+    const link = document.createElement('a');
+    link.href = objectUrl;
+    link.download = getResumeDownloadName(app);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => window.URL.revokeObjectURL(objectUrl), 1000);
+  };
+
+  const handleResumeClick = (event, app) => {
+    if (!String(app.resume || '').startsWith('data:')) return;
+    event.preventDefault();
+    try {
+      downloadDataResume(app);
+    } catch {
+      setError('Resume file could not be downloaded. Please ask the candidate to upload it again.');
+    }
+  };
+
   return (
     <Box>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
@@ -229,7 +276,11 @@ const PosterApplications = () => {
           </Stack>
 
           <Stack spacing={1.2}>
-            {group.applications.map((app) => (
+            {group.applications.map((app) => {
+              const resume = String(app.resume || '').trim();
+              const isDataResume = resume.startsWith('data:');
+
+              return (
               <Box
                 key={app._id}
                 sx={{
@@ -292,16 +343,16 @@ const PosterApplications = () => {
 
                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} useFlexGap>
                   <Button
-                    component="a"
-                    href={app.resume}
-                    target="_blank"
-                    rel="noreferrer"
-                    download={String(app.resume || '').startsWith('data:') ? `${(app.firstName || 'candidate').toLowerCase()}-resume` : undefined}
+                    component={isDataResume ? 'button' : 'a'}
+                    href={!isDataResume ? resume : undefined}
+                    target={!isDataResume ? '_blank' : undefined}
+                    rel={!isDataResume ? 'noreferrer' : undefined}
+                    onClick={(event) => handleResumeClick(event, app)}
                     variant="outlined"
                     size="small"
                     startIcon={<DescriptionOutlinedIcon sx={{ fontSize: '15px !important' }} />}
                     endIcon={<OpenInNewOutlinedIcon sx={{ fontSize: '14px !important' }} />}
-                    disabled={!app.resume}
+                    disabled={!resume}
                     sx={{
                       textTransform: 'none',
                       borderRadius: '9px',
@@ -345,7 +396,8 @@ const PosterApplications = () => {
                   </Button>
                 </Stack>
               </Box>
-            ))}
+              );
+            })}
           </Stack>
         </Box>
       ))}
