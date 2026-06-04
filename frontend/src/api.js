@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API_BASE_URL = (
-  process.env.REACT_APP_API_BASE_URL?.trim() || "https://hire-ly-izmm.vercel.app/"
+  process.env.REACT_APP_API_BASE_URL?.trim()
 ).replace(/\/+$/, "");
 
 const API = axios.create({
