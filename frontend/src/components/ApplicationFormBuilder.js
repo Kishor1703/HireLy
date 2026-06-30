@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -35,6 +35,23 @@ const createCustomField = (index) => ({
 });
 
 const ApplicationFormBuilder = ({ value = [], onChange }) => {
+  const [optionDrafts, setOptionDrafts] = useState({});
+
+  useEffect(() => {
+    setOptionDrafts((prev) => {
+      const next = {};
+
+      value.forEach((field, index) => {
+        const key = field.id || `field_${index}`;
+        next[key] = Object.prototype.hasOwnProperty.call(prev, key)
+          ? prev[key]
+          : (field.options || []).join(', ');
+      });
+
+      return next;
+    });
+  }, [value]);
+
   const handleFieldChange = (index, updates) => {
     onChange(value.map((field, fieldIndex) => (fieldIndex === index ? { ...field, ...updates } : field)));
   };
@@ -45,6 +62,14 @@ const ApplicationFormBuilder = ({ value = [], onChange }) => {
 
   const removeField = (index) => {
     onChange(value.filter((_, fieldIndex) => fieldIndex !== index));
+  };
+
+  const handleOptionsChange = (index, field, rawValue) => {
+    const key = field.id || `field_${index}`;
+    setOptionDrafts((prev) => ({ ...prev, [key]: rawValue }));
+    handleFieldChange(index, {
+      options: rawValue.split(',').map((item) => item.trim()).filter(Boolean),
+    });
   };
 
   return (
@@ -129,10 +154,8 @@ const ApplicationFormBuilder = ({ value = [], onChange }) => {
             {field.type === 'select' && (
               <TextField
                 label="Options"
-                value={(field.options || []).join(', ')}
-                onChange={(event) => handleFieldChange(index, {
-                  options: event.target.value.split(',').map((item) => item.trim()).filter(Boolean),
-                })}
+                value={optionDrafts[field.id || `field_${index}`] ?? (field.options || []).join(', ')}
+                onChange={(event) => handleOptionsChange(index, field, event.target.value)}
                 helperText="Separate options with commas"
                 fullWidth
                 sx={{ mt: 1.5, ...builderFieldSx }}
