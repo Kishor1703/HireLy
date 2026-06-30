@@ -353,7 +353,7 @@ const ManageJobs = () => {
               ))}
             </TextField>
             <ApplicationFormBuilder
-              value={normalizeApplicationForm(editForm.applicationForm)}
+              value={editForm.applicationForm}
               onChange={(applicationForm) => setEditForm((prev) => ({ ...prev, applicationForm }))}
             />
           </Stack>

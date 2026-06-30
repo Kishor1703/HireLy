@@ -14,7 +14,7 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
 import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
 import ApplicationFormBuilder from '../../components/ApplicationFormBuilder';
-import { getDefaultApplicationForm, normalizeApplicationForm } from '../../utils/applicationForm';
+import { getDefaultApplicationForm } from '../../utils/applicationForm';
 
 const fieldSx = {
   '& .MuiOutlinedInput-root': {
@@ -345,7 +345,7 @@ const JobPosterDashboard = () => {
           </Box>
 
           <ApplicationFormBuilder
-            value={normalizeApplicationForm(applicationForm)}
+            value={applicationForm}
             onChange={setApplicationForm}
           />
 
